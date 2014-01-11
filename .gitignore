@@ -1,0 +1,27 @@
+##################
+# Unity ignores:
+#
+
+# OS X only (not needed on other platforms)
+.DS_Store
+*.swp
+*.Trashes
+
+# All platforms
+Temp
+Library/
+GFXProduction/
+
+*.csproj
+*.pidb
+*.unityproj
+*.sln
+*.userprefs
+.DS_Store
+FailedAssetImports.txt
+\cache\
+\metadata
+\previews\
+\ScriptAssemblies
+obj
+*.log
