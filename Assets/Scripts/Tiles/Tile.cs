@@ -16,7 +16,7 @@ public class Tile : WorldObject
 	protected Vector3 velocity; 
 
 	protected float moveSpeed = 13f;
-	protected float acceleration = 75f;
+	protected float acceleration = 40f;
 
 	public virtual void Initialize () 
 	{
