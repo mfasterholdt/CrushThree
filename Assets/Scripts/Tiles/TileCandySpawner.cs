@@ -4,10 +4,11 @@ using System.Collections;
 public class TileCandySpawner : Tile
 {
 	public Tile[] tilePrefabs;
-	public float force = 7;
+	public float force = 0;
 
 	private Tile target;
 	private Vector2int spawnTarget;
+	private int type;
 	
 	void Start () 
 	{
@@ -24,9 +25,7 @@ public class TileCandySpawner : Tile
 
 		spawnTarget = pos + dir;
 	}
-
-	int type;
-
+	
 	void Spawn()
 	{
 		if(target == null || target.pos != spawnTarget)
@@ -42,6 +41,7 @@ public class TileCandySpawner : Tile
 				type = Random.Range(0, tilePrefabs.Length);
 
 				target = Level.Instance.CreateTile(spawnTarget, tilePrefabs[type].gameObject);
+
 				target.AddVelocity(dir.ToVector3() * force);
 			}
 		}

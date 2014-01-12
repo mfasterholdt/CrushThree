@@ -19,7 +19,7 @@ public class Selection : WorldObject
 	{
 		MoveSelection();
 		
-		if (valid && Input.GetMouseButtonUp(0))
+		if (valid && Input.GetMouseButtonDown(0))
 		{		
 			if(OnMouseClick != null)
 			{

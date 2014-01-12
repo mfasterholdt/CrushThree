@@ -5,10 +5,10 @@ public class Tile : WorldObject
 {
 	[HideInInspector]
 	public Vector2int pos;
-
+	
 	public GameObject visuals;
 	public bool debug;
-	
+
 	protected Vector3 targetPos;
 	protected Vector2int dir;
 	
@@ -16,7 +16,7 @@ public class Tile : WorldObject
 	protected Vector3 velocity; 
 
 	protected float moveSpeed = 13f;
-	protected float acceleration = 40f;
+	protected float acceleration = 75f;
 
 	public virtual void Initialize () 
 	{
@@ -85,13 +85,12 @@ public class Tile : WorldObject
 				if(Mathf.Sign(velocity.y) == 1 || (tile != null && tile.velocity.y == 0))
 				{
 					velocity = Vector3.zero;
+					Landing();
 				}
 				else
 				{
 					velocity.x = 0;
 				}
-
-				Landing();
 			}
 
 			transform.position = nextPos;
