@@ -10,13 +10,13 @@ public class Tile : WorldObject
 	public bool debug;
 	
 	protected Vector3 targetPos;
-	protected Vector3 dir;
+	protected Vector2int dir;
 	
 	protected Vector2int force;
 	protected Vector3 velocity; 
 
 	protected float moveSpeed = 13f;
-	protected float acceleration = 35f;
+	protected float acceleration = 40f;
 
 	public virtual void Initialize () 
 	{
@@ -51,6 +51,11 @@ public class Tile : WorldObject
 				Level.Instance.MoveTile(this, moveTarget);
 			}
 		}
+	}
+
+	public void AddVelocity(Vector3 add)
+	{
+		velocity += add;
 	}
 
 	public virtual void Update()

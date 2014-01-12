@@ -12,7 +12,7 @@ public class Selection : WorldObject
 	
 	void Start()
 	{
-		Screen.showCursor = false;
+		//Screen.showCursor = false;
 	}
 	
 	void Update () 

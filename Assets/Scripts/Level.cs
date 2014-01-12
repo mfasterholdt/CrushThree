@@ -35,6 +35,11 @@ public class Level : SingletonComponent<Level>
 			selection.OnMouseClick += OnSelectionClick;
 		}
 
+		if(selectionTarget)
+		{
+			selectionTarget = Instantiate(selectionTarget) as GameObject;
+		}
+
 		RegisterWorld();
 	}
 	
@@ -200,10 +205,10 @@ public class Level : SingletonComponent<Level>
 	public Tile GetTile(Vector2int pos){ return GetTile(pos.x, pos.y); }
 	
 	//Create Tile
-	public bool CreateTile(Vector2int pos, GameObject prefab)
+	public Tile CreateTile(Vector2int pos, GameObject prefab)
 	{
 		//Occupied
-		if(world[pos.x, pos.y] != null) return false;
+		if(world[pos.x, pos.y] != null) return null;
 		
 		//Create tile
 		GameObject obj = Instantiate(prefab, pos.ToVector3(), Quaternion.identity) as GameObject;
@@ -217,7 +222,7 @@ public class Level : SingletonComponent<Level>
 		
 		newTile.Initialize();
 		
-		return true;
+		return newTile;
 	}
 	
 	//Remove Tile
