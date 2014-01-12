@@ -25,7 +25,9 @@ public class Level : SingletonComponent<Level>
 	
 	public delegate void StepEvent();
 	public event StepEvent OnStep;
-	
+
+	private bool inputLocked;
+
 	void Start () 
 	{
 		if(selectionPrefab)
@@ -70,9 +72,11 @@ public class Level : SingletonComponent<Level>
 	}
 	
 	void OnSelectionClick(Selection sender, Vector2int pos)
-	{
+	{	
+		if(inputLocked) return;
+
 		Tile tile = GetTile(pos);
-		
+
 		if(tile)
 		{
 			if(pickedTile)
@@ -105,7 +109,8 @@ public class Level : SingletonComponent<Level>
 		pickedTile = tile;
 
 		selectionTarget.SetActive(true);
-		selectionTarget.transform.position = tile.transform.position;
+
+		selectionTarget.transform.position = tile.pos.ToVector3();
 	}
 
 	void Push(Tile tile, Vector2int force)
