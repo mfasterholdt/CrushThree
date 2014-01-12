@@ -76,11 +76,9 @@ public class Tile : WorldObject
 			if(overshootX || overshootY)
 			{
 				nextPos = targetPos;
-
+				
 				//Check underneath
-				Vector2int checkTarget = pos;
-				checkTarget.y -= 1;
-				Tile tile = Level.Instance.GetTile(checkTarget);
+				Tile tile = Level.Instance.GetTile(pos.x, pos.y -1);
 
 				if(Mathf.Sign(velocity.y) == 1 || (tile != null && tile.velocity.y == 0))
 				{
@@ -94,6 +92,10 @@ public class Tile : WorldObject
 			}
 
 			transform.position = nextPos;
+		}
+		else
+		{
+			velocity = Vector3.zero;
 		}
 	}
 
