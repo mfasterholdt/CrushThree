@@ -95,7 +95,7 @@ public class Tile : WorldObject
 		}
 		else
 		{
-			velocity = Vector3.zero;
+			velocity = Vector3.zero;	
 		}
 	}
 

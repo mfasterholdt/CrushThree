@@ -22,4 +22,9 @@ public class TileCandy : Tile
 
 		Level.Instance.Match(this);
 	}
+
+	public void MatchTransition(float per)
+	{
+		visuals.transform.localScale = Vector3.one * per;
+	}
 }

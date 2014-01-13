@@ -26,7 +26,9 @@ public class Level : SingletonComponent<Level>
 	public delegate void StepEvent();
 	public event StepEvent OnStep;
 
-	private bool inputLocked;
+	private bool matchTransition;
+	private float matchTimer;
+	private float matchDelay = 0.15f;
 
 	void Start () 
 	{
@@ -73,7 +75,7 @@ public class Level : SingletonComponent<Level>
 	
 	void OnSelectionClick(Selection sender, Vector2int pos)
 	{	
-		if(inputLocked) return;
+		if(matchTransition) return;
 
 		Tile tile = GetTile(pos);
 
@@ -124,6 +126,7 @@ public class Level : SingletonComponent<Level>
 
 	private List<TileCandy> horizontalMatches = new List<TileCandy>();
 	private List<TileCandy> verticalMatches = new List<TileCandy>();
+	private List<TileCandy> allMatches = new List<TileCandy>();
 
 	public void Match(TileCandy tile)
 	{
@@ -138,21 +141,22 @@ public class Level : SingletonComponent<Level>
 
 		if(horizontalMatches.Count > 1 || verticalMatches.Count > 1)
 		{
+			//Match found
 			int points = 1;
 
 			if(horizontalMatches.Count > 1)
 			{
 				points += horizontalMatches.Count;
-				horizontalMatches.ForEach(x => RemoveTile(x));
+				allMatches.AddRange(horizontalMatches);
 			}
 
 			if(verticalMatches.Count > 1)
 			{
 				points += verticalMatches.Count;
-				verticalMatches.ForEach(x => RemoveTile(x));
+				allMatches.AddRange(verticalMatches);
 			}
 
-			RemoveTile(tile);
+			allMatches.Add(tile);
 
 			Debug.Log ("Points : "+ points);
 		}
@@ -166,6 +170,36 @@ public class Level : SingletonComponent<Level>
 		{
 			list.Add(tile);
 			Connect(list, type, pos + dir, dir);
+		}
+	}
+
+	void FixedUpdate()
+	{
+		if(allMatches.Count == 0)
+		{
+			matchTransition = false;
+		}
+		else
+		{
+			if(!matchTransition)
+			{
+				matchTransition = true;
+				matchTimer = matchDelay;
+			}
+
+			float per = matchTimer / matchDelay;
+
+			if(per <= 0)
+			{
+				allMatches.ForEach(x => x.Remove());
+				allMatches.Clear();
+			}
+			else
+			{
+				allMatches.ForEach(x=> x.MatchTransition(per));
+
+				matchTimer -= Time.deltaTime;
+			}
 		}
 	}
 
