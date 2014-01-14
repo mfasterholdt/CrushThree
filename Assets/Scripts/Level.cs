@@ -30,12 +30,15 @@ public class Level : SingletonComponent<Level>
 	private float matchTimer;
 	private float matchDelay = 0.15f;
 
+	private bool dragging;
+
 	void Start () 
 	{
 		if(selectionPrefab)
 		{
 			GameObject selectionObj = Instantiate(selectionPrefab) as GameObject;
 			selection = selectionObj.GetComponent<Selection>();
+
 			selection.OnMouseClick += OnSelectionClick;
 		}
 
@@ -73,36 +76,30 @@ public class Level : SingletonComponent<Level>
 		}
 	}
 	
-	void OnSelectionClick(Selection sender, Vector2int pos)
+	void OnSelectionClick(Selection sender, Vector3 pos)
 	{	
+		//Are we trasitioning?
 		if(matchTransition) return;
 
-		Tile tile = GetTile(pos);
+		Vector2int p = new Vector2int(pos.x, pos.y);
 
-		if(tile)
+		Tile tile = GetTile(p);
+
+		//Did we hit a tile?
+		if(!tile) 
+			return;
+
+		//Is a tile already selecte?
+		if(!pickedTile)
 		{
-			if(pickedTile)
-			{
-				if(tile != pickedTile)
-				{
-					//Swap
-					bool success = SwapTiles(tile, pickedTile);
+			Select(tile);
+			return;
+		}
 
-					if(success)
-					{
-						selectionTarget.SetActive(false);
-						pickedTile = null;
-					}
-					else
-					{
-						Select(tile);
-					}
-				}
-			}
-			else
-			{
-				Select(tile);
-			}
+		//Did we hit the picked tile again?
+		if(tile != pickedTile)
+		{
+			SwapTiles(tile, pickedTile);
 		}
 	}
 
@@ -158,7 +155,7 @@ public class Level : SingletonComponent<Level>
 
 			allMatches.Add(tile);
 
-			Debug.Log ("Points : "+ points);
+			//Debug.Log ("Points : "+ points);
 		}
 	}
 
@@ -175,6 +172,29 @@ public class Level : SingletonComponent<Level>
 
 	void FixedUpdate()
 	{
+		CheckDragSwap();
+
+		UpdateMatchTransitions();
+	}
+
+	void CheckDragSwap()
+	{
+		//No tile selected or not dragging
+		if(!pickedTile || !selection.dragging) return;
+
+		int x = Mathf.RoundToInt(selection.mousePosition.x);
+		int y = Mathf.RoundToInt(selection.mousePosition.y);
+
+		Tile tile = GetTile(x, y);
+
+		if(tile && tile != pickedTile)
+		{
+			SwapTiles(tile, pickedTile);
+		}
+	}
+
+	void UpdateMatchTransitions()
+	{
 		if(allMatches.Count == 0)
 		{
 			matchTransition = false;
@@ -186,9 +206,9 @@ public class Level : SingletonComponent<Level>
 				matchTransition = true;
 				matchTimer = matchDelay;
 			}
-
+			
 			float per = matchTimer / matchDelay;
-
+			
 			if(per <= 0)
 			{
 				allMatches.ForEach(x => x.Remove());
@@ -197,28 +217,35 @@ public class Level : SingletonComponent<Level>
 			else
 			{
 				allMatches.ForEach(x=> x.MatchTransition(per));
-
+				
 				matchTimer -= Time.deltaTime;
 			}
 		}
+
 	}
 
-	public bool SwapTiles(Tile tile1, Tile tile2)
+	public bool SwapTiles(Tile tile, Tile target)
 	{
-		Vector2int pos1 = tile1.pos;
-		Vector2int pos2 = tile2.pos;
+		Vector2int pos1 = tile.pos;
+		Vector2int pos2 = target.pos;
 
 		//Adjacent check
 		float dist = Mathf.Abs(pos1.x - pos2.x) + Mathf.Abs(pos1.y - pos2.y);
 
 		if(dist > 1)
+		{
+			Select(tile);
 			return false;
+		}
 
-		world[pos1.x, pos1.y] = tile2;
-		world[pos2.x, pos2.y] = tile1;
+		world[pos1.x, pos1.y] = target;
+		world[pos2.x, pos2.y] = tile;
 
-		tile1.MoveTile(pos2);
-		tile2.MoveTile(pos1);
+		tile.MoveTile(pos2);
+		target.MoveTile(pos1);
+
+		selectionTarget.SetActive(false);
+		pickedTile = null;
 
 		return true;
 	}

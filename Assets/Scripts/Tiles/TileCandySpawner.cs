@@ -9,9 +9,13 @@ public class TileCandySpawner : Tile
 	private Tile target;
 	private Vector2int spawnTarget;
 	private int type;
-	
-	void Start () 
+
+	bool init;
+
+	public override void Initialize ()
 	{
+		base.Initialize ();
+	
 		float rot = Mathf.RoundToInt(visuals.transform.rotation.eulerAngles.z / 90f); 
 
 		if(rot == 0)
