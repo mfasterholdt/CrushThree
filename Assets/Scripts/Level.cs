@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 public class Level : SingletonComponent<Level> 
 {
@@ -20,7 +21,19 @@ public class Level : SingletonComponent<Level>
 	
 	[HideInInspector]
 	public static int WorldSize = 300;
-		
+
+	[HideInInspector]
+	public List<TileCandy> glitches;
+	
+	public int glitchCount = 6;	
+
+	public Material glitchMaterial;
+
+	public Board board; 
+
+	public GameObject playerPrefab;
+	private Player player;
+
 	private Tile pickedTile;
 	
 	public delegate void StepEvent();
@@ -53,7 +66,7 @@ public class Level : SingletonComponent<Level>
 	void RegisterWorld()
 	{
 		world = new Tile[WorldSize, WorldSize];
-		
+
 		Tile[] preplaced = FindObjectsOfType(typeof(Tile)) as Tile[];
 		
 		for(int i=0, count = preplaced.Length; i<count; i++)
@@ -72,6 +85,28 @@ public class Level : SingletonComponent<Level>
 				world[tile.pos.x, tile.pos.y] = tile;
 				
 				tiles.Add(tile);
+			}
+		}
+
+		//Initialize boards
+		List<TileCandy>startBoard = board.Initialize();
+
+		//Create Start Glitches
+		glitches = new List<TileCandy>();
+
+		startBoard = startBoard.OrderBy(x => Guid.NewGuid()).ToList();
+
+		for(int i = 0; i < glitchCount; i++)
+		{
+			TileCandy newGlitch = startBoard.Find(x => !glitches.Contains(x) && (int)x.type == i);
+
+			if(newGlitch)
+			{
+				newGlitch.BecomeGlitch();
+			}
+			else
+			{
+				break;
 			}
 		}
 	}
@@ -127,6 +162,47 @@ public class Level : SingletonComponent<Level>
 
 	public void Match(TileCandy tile)
 	{
+		//Glitch Connect
+		if(tile.glitch)
+		{
+			horizontalMatches.Clear();
+			verticalMatches.Clear();
+			
+			ConnectGlitch(horizontalMatches, tile.pos, Vector2int.left);
+			ConnectGlitch(horizontalMatches, tile.pos, Vector2int.right);
+			
+			ConnectGlitch(verticalMatches, tile.pos, Vector2int.up);
+			ConnectGlitch(verticalMatches, tile.pos, Vector2int.down);
+			
+			if(horizontalMatches.Count > 1 || verticalMatches.Count > 1)
+			{
+				Vector2int spawnPos = tile.pos;
+
+				if(horizontalMatches.Count > 1)
+				{
+					allMatches.AddRange(horizontalMatches);
+
+					int posX = spawnPos.x;
+					allMatches.ForEach(x => posX += x.pos.x);
+					spawnPos.x = posX / 3; 
+				}
+
+				if(verticalMatches.Count > 1)
+				{
+					allMatches.AddRange(verticalMatches);
+					
+					int posY = spawnPos.y;
+					allMatches.ForEach(x => posY += x.pos.y);
+					spawnPos.y = posY / 3;
+				}
+
+				allMatches.Add(tile);
+
+				SpawnPlayer(spawnPos);
+			}
+		}
+
+		//Regular Connect
 		horizontalMatches.Clear();
 		verticalMatches.Clear();
 
@@ -138,7 +214,6 @@ public class Level : SingletonComponent<Level>
 
 		if(horizontalMatches.Count > 1 || verticalMatches.Count > 1)
 		{
-			//Match found
 			int points = 1;
 
 			if(horizontalMatches.Count > 1)
@@ -154,9 +229,9 @@ public class Level : SingletonComponent<Level>
 			}
 
 			allMatches.Add(tile);
-
 			//Debug.Log ("Points : "+ points);
 		}
+
 	}
 
 	public void Connect(List<TileCandy> list, TileCandy.CandyType type, Vector2int pos, Vector2int dir)
@@ -168,6 +243,28 @@ public class Level : SingletonComponent<Level>
 			list.Add(tile);
 			Connect(list, type, pos + dir, dir);
 		}
+	}
+
+	public void ConnectGlitch(List<TileCandy> list, Vector2int pos, Vector2int dir)
+	{
+		TileCandy tile = GetTile(pos.x + dir.x, pos.y + dir.y) as TileCandy;
+		
+		if(tile != null && tile.glitch)
+		{
+			list.Add(tile);
+			ConnectGlitch(list, pos + dir, dir);
+		}
+	}
+
+	void SpawnPlayer(Vector2int p)
+	{
+		if(player) return;
+
+		Vector3 pos = p.ToVector3();
+
+		GameObject newPlayer = Instantiate(playerPrefab, pos, Quaternion.identity) as GameObject; 
+
+		player = newPlayer.GetComponent<Player>();
 	}
 
 	void FixedUpdate()
@@ -211,7 +308,7 @@ public class Level : SingletonComponent<Level>
 			
 			if(per <= 0)
 			{
-				allMatches.ForEach(x => x.Remove());
+				allMatches.ForEach(x => RemoveTile(x));
 				allMatches.Clear();
 			}
 			else
@@ -295,9 +392,14 @@ public class Level : SingletonComponent<Level>
 	public void RemoveTile(Tile tile)
 	{
 		world[tile.pos.x, tile.pos.y] = null;
-		
+
+		TileCandy c = tile as TileCandy;
+
+		if(c && c.glitch)
+			glitches.Remove(c);
+
 		tiles.Remove(tile);
-		
+
 		tile.Remove();
 	}
 }

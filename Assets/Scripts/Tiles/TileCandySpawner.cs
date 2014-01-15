@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Linq;
 
 public class TileCandySpawner : Tile
 {
@@ -46,12 +47,20 @@ public class TileCandySpawner : Tile
 
 				target = Level.Instance.CreateTile(spawnTarget, tilePrefabs[type].gameObject);
 
+				if(Level.Instance.glitches.Count < Level.Instance.glitchCount)
+				{
+					if(Level.Instance.glitches.Find(x => (int)x.type == type) == null)
+					{
+						(target as TileCandy).BecomeGlitch();
+					}
+				}
+
 				target.AddVelocity(dir.ToVector3() * force);
 			}
 		}
 	}
 
-	void FixedUpdate () 
+	public override void FixedUpdate ()
 	{
 		Spawn ();
 	}
