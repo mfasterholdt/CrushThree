@@ -6,13 +6,23 @@ public class Player : MonoBehaviour
 	public float playerMoveSpeed = 5f;
 	public float jumpForce = 50f;
 	public float gravity = -15f;
+
+	public Vector3 cameraOffset;
+	private Camera cam;
+
+	private BezierCurveManager levelCurve;
 	private Vector3 moveDir;
 
 	private bool grounded;
+	private float levelPos = 1.7f;
 
 	void Start()
 	{
+		levelCurve = FindObjectOfType<BezierCurveManager>();
 
+		cam = Camera.main;
+
+		previousPos = transform.position;
 	}
 	
 	void Update()
@@ -32,27 +42,66 @@ public class Player : MonoBehaviour
 		grounded = true;
 	}
 
+	float vel;
+
+	Vector3 previousPos;
+
 	void FixedUpdate()
-	{
-		rigidbody.AddForce(Vector3.up * gravity);
+	{		
 
-		Vector3 vel = rigidbody.velocity;
-
+		//Movement
 		if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
 		{
-			vel.x = playerMoveSpeed;
+			vel = -playerMoveSpeed;
 		}
 		else if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
 		{
-			vel.x = -playerMoveSpeed;
+			vel = playerMoveSpeed;
 		}
 		else
 		{
-			vel.x = 0;
+			vel = 0;
 		}
 
+		levelPos += vel * Time.deltaTime;
+
+		Vector3 curvePos = levelCurve.GetPositionAtTime(levelPos);
+
+		curvePos.y = transform.position.y;
+
+		rigidbody.MovePosition(curvePos);
+
+		//Gravity
+		rigidbody.AddForce(Vector3.up * gravity);
 
 
-		rigidbody.velocity = vel;
+		//Look at
+		if(vel != 0)
+		{
+			Vector3 lookDir = previousPos - transform.position;
+
+			lookDir.y = 0;
+
+			transform.LookAt(transform.position + lookDir * Mathf.Sign(vel), Vector3.up);
+		}
+		
+		previousPos = transform.position;
+
+		//Camera Position
+		Vector3 nextCamPos = cam.transform.position;
+		Vector3 camTarget = transform.position + transform.right * cameraOffset.x + transform.up * cameraOffset.y;
+		nextCamPos += (camTarget - nextCamPos) * Time.deltaTime * 8f;
+		cam.transform.position = nextCamPos;
+
+		//Camera Rotation
+		Vector3 lookAtTarget = transform.position - cam.transform.position;
+		lookAtTarget += cam.transform.position;
+		lookAtTarget.y = cam.transform.position.y;
+		//lookAtTarget.Normalize();
+
+		Vector3 nextLookAt = cam.transform.position + cam.transform.forward; 
+		nextLookAt += (lookAtTarget - nextLookAt) * Time.deltaTime * 8f;
+
+		cam.transform.LookAt(nextLookAt, Vector3.up);
 	}
 }
