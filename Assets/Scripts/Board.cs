@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class Board : WorldObject 
 {
@@ -7,10 +8,14 @@ public class Board : WorldObject
 	public int height = 1;
 
 	public Tile[] tilePrefabs;
-	
-	void Start () 
+
+	private List<TileCandy> startBoard;
+
+	public List<TileCandy> Initialize () 
 	{
-		if(tilePrefabs.Length == 0) return;
+		startBoard = new List<TileCandy>();
+
+		if(tilePrefabs.Length == 0) return null;
 
 		Vector2int origin = new Vector2int(transform.position.x, transform.position.y);
 		Vector2int pos;
@@ -25,9 +30,13 @@ public class Board : WorldObject
 
 				int type = Random.Range(0, tilePrefabs.Length);
 
-				Level.Instance.CreateTile(pos, tilePrefabs[type].gameObject);		
+				TileCandy newTile = Level.Instance.CreateTile(pos, tilePrefabs[type].gameObject) as TileCandy;		
+
+				startBoard.Add(newTile);
 			}
 		}
+
+		return startBoard;
 	}
 
 	void Update () {

@@ -16,7 +16,9 @@ public class Tile : WorldObject
 	protected Vector3 velocity; 
 
 	protected float moveSpeed = 13f;
-	protected float acceleration = 40f;
+	protected float acceleration = 50f;
+
+	public bool ground;
 
 	public virtual void Initialize () 
 	{
@@ -76,13 +78,13 @@ public class Tile : WorldObject
 			if(overshootX || overshootY)
 			{
 				nextPos = targetPos;
-
+				
 				//Check underneath
-				Vector2int checkTarget = pos;
-				checkTarget.y -= 1;
-				Tile tile = Level.Instance.GetTile(checkTarget);
+				//Tile tile = Level.Instance.GetTile(pos.x, pos.y -1);
+				bool isGrounded = CheckGround(pos.x, pos.y);
 
-				if(Mathf.Sign(velocity.y) == 1 || (tile != null && tile.velocity.y == 0))
+				//if(Mathf.Sign(velocity.y) == 1 || isGrounded)
+				if(isGrounded)
 				{
 					velocity = Vector3.zero;
 					Landing();
@@ -94,6 +96,28 @@ public class Tile : WorldObject
 			}
 
 			transform.position = nextPos;
+		}
+		/*else
+		{
+			velocity = Vector3.zero;	
+		}*/
+	}
+
+	public bool CheckGround(int x, int y)
+	{
+		Tile tile = Level.Instance.GetTile(x, y - 1);
+
+		if(tile == null) 
+		{
+			return false;
+		}
+		else if(tile.ground) 
+		{
+			return true;
+		}
+		else
+		{
+			return CheckGround(x, y -1);
 		}
 	}
 
