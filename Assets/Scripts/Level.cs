@@ -260,9 +260,9 @@ public class Level : SingletonComponent<Level>
 	{
 		if(player) return;
 
-		Vector3 pos = p.ToVector3();
+		Vector3 spawnPos = p.ToVector3();
 
-		GameObject newPlayer = Instantiate(playerPrefab, pos, Quaternion.Euler(0, 90f, 0)) as GameObject; 
+		GameObject newPlayer = Instantiate(playerPrefab, spawnPos, Quaternion.Euler(0, 0, 0)) as GameObject; 
 
 		player = newPlayer.GetComponent<Player>();
 	}
