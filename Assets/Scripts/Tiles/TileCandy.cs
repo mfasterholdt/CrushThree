@@ -14,6 +14,8 @@ public class TileCandy : Tile
 	private Material glitchMaterial;
 	private float glitchTimer;
 
+	private float gravity = -15f;
+
 	private delegate void State();
 	State state;
 
@@ -69,7 +71,9 @@ public class TileCandy : Tile
 
 	private void IdleState()
 	{
-
+		//Gravity
+		if(rigidbody2D)
+			rigidbody2D.AddForce(Vector2.up * gravity);
 	}
 
 	public void SetCarryState()
@@ -82,14 +86,22 @@ public class TileCandy : Tile
 
 	}
 
-	private void SetPipeState()
+	private Pipe currentPipe;
+
+	public void SetPipeState(Pipe p, Vector2int pos)
 	{
+		currentPipe = p;
+
+		//***Set pipe pose as pos
+
 		state = PipeState;
 	}
 
 	private void PipeState()
 	{
+		//***look up in pipe to check for collision
 
+		//***possibly use old move of visuals again
 	}
 
 	public override void Update ()

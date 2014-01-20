@@ -52,6 +52,8 @@ public class Spawner : WorldObject
 			GameObject newTile = Instantiate(tilePrefabs[type].gameObject, spawnTarget, Quaternion.identity) as GameObject;
 
 			target = newTile.GetComponent<TileCandy>();
+
+			//target.SetPipeState();
 		}
 
 		/*if(target == null || target.pos != spawnTarget)
