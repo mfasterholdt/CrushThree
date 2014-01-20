@@ -27,3 +27,7 @@ FailedAssetImports.txt
 \ScriptAssemblies
 obj
 *.log
+
+Assets/Materials/SelectionTarget.mat.meta
+
+Assets/Materials/SelectionTarget.mat.meta
