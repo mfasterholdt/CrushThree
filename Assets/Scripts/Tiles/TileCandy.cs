@@ -82,6 +82,16 @@ public class TileCandy : Tile
 
 	}
 
+	private void SetPipeState()
+	{
+		state = PipeState;
+	}
+
+	private void PipeState()
+	{
+
+	}
+
 	public override void Update ()
 	{
 		if(state == BoardState)

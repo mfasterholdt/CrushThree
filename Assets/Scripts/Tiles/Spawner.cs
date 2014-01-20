@@ -2,22 +2,27 @@
 using System.Collections;
 using System.Linq;
 
-public class TileCandySpawner : Tile
+public class Spawner : WorldObject
 {
 	public Tile[] tilePrefabs;
-	public float spawnForce = 0;
 
-	private Tile target;
-	private Vector2int spawnTarget;
+	private TileCandy target;
+
+	private Vector3 spawnTarget;
+	private Vector2int dir;
+
 	private int type;
 
 	bool init;
 
-	public override void Initialize ()
+	void Start()
 	{
-		base.Initialize ();
-	
-		float rot = Mathf.RoundToInt(visuals.transform.rotation.eulerAngles.z / 90f); 
+		SetSpawnTarget();
+	}
+
+	void SetSpawnTarget()
+	{
+		float rot = Mathf.RoundToInt(transform.rotation.eulerAngles.z / 90f); 
 
 		if(rot == 0)
 			dir = Vector2int.down;
@@ -27,13 +32,29 @@ public class TileCandySpawner : Tile
 			dir = Vector2int.up;
 		else if(rot == 3)
 			dir = Vector2int.left;
-
-		spawnTarget = pos + dir;
+		
+		spawnTarget = transform.position + dir.ToVector3();
 	}
-	
+
+	float TileDist()
+	{
+		float dist = Mathf.Abs(target.transform.position.x - spawnTarget.x) + Mathf.Abs(target.transform.position.y - spawnTarget.y);
+
+		return dist;
+	}
+
 	void Spawn()
 	{
-		if(target == null || target.pos != spawnTarget)
+		if(target == null || TileDist() >= 1)
+		{
+			int type = Random.Range(0, tilePrefabs.Length);
+						
+			GameObject newTile = Instantiate(tilePrefabs[type].gameObject, spawnTarget, Quaternion.identity) as GameObject;
+
+			target = newTile.GetComponent<TileCandy>();
+		}
+
+		/*if(target == null || target.pos != spawnTarget)
 		{
 			Tile tile = Level.Instance.GetTile(spawnTarget);
 
@@ -57,10 +78,10 @@ public class TileCandySpawner : Tile
 
 				target.AddVelocity(dir.ToVector3() * spawnForce);
 			}
-		}
+		}*/
 	}
 
-	public override void FixedUpdate ()
+	void FixedUpdate ()
 	{
 		Spawn ();
 	}
