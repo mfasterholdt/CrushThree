@@ -3,13 +3,19 @@ using System.Collections;
 
 public class Pipe : MonoBehaviour 
 {
-	public 
-	void Start () {
-	
+	public Transform entryPos;
+	public Transform exitPos;
+
+	private TileCandy[] content;
+
+	void Start () 
+	{
+		int length = (int)Mathf.Abs(exitPos.position.x - entryPos.position.x) + (int)Mathf.Abs(exitPos.position.y - entryPos.position.y);
+
 	}
-	
-	// Update is called once per frame
-	void Update () {
+
+	void Update () 
+	{
 	
 	}
 }
