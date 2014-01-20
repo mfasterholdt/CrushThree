@@ -12,7 +12,7 @@ public class Tile : WorldObject
 	protected Vector3 targetPos;
 	protected Vector2int dir;
 	
-	protected Vector2int force;
+	protected Vector2int spawnForce;
 	protected Vector3 velocity; 
 
 	protected float moveSpeed = 13f;
@@ -24,7 +24,7 @@ public class Tile : WorldObject
 	{
 		pos = new Vector2int(transform.position.x, transform.position.y);
 		
-		force = Vector2int.zero;
+		spawnForce = Vector2int.zero;
 		
 		targetPos = transform.position;
 	}
@@ -41,10 +41,10 @@ public class Tile : WorldObject
 
 	public virtual void FixedUpdate()
 	{
-		if(force != Vector2int.zero && transform.position == targetPos)
+		if(spawnForce != Vector2int.zero && transform.position == targetPos)
 		{
-			force = new Vector2int(0, -1);
-			Vector2int moveTarget = pos + force;
+			spawnForce = new Vector2int(0, -1);
+			Vector2int moveTarget = pos + spawnForce;
 
 			Tile tile = Level.Instance.GetTile(moveTarget);
 
@@ -80,10 +80,8 @@ public class Tile : WorldObject
 				nextPos = targetPos;
 				
 				//Check underneath
-				//Tile tile = Level.Instance.GetTile(pos.x, pos.y -1);
 				bool isGrounded = CheckGround(pos.x, pos.y);
 
-				//if(Mathf.Sign(velocity.y) == 1 || isGrounded)
 				if(isGrounded)
 				{
 					velocity = Vector3.zero;
@@ -97,10 +95,6 @@ public class Tile : WorldObject
 
 			transform.position = nextPos;
 		}
-		/*else
-		{
-			velocity = Vector3.zero;	
-		}*/
 	}
 
 	public bool CheckGround(int x, int y)

@@ -5,7 +5,7 @@ using System.Linq;
 public class TileCandySpawner : Tile
 {
 	public Tile[] tilePrefabs;
-	public float force = 0;
+	public float spawnForce = 0;
 
 	private Tile target;
 	private Vector2int spawnTarget;
@@ -55,7 +55,7 @@ public class TileCandySpawner : Tile
 					}
 				}
 
-				target.AddVelocity(dir.ToVector3() * force);
+				target.AddVelocity(dir.ToVector3() * spawnForce);
 			}
 		}
 	}
