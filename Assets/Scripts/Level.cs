@@ -67,8 +67,8 @@ public class Level : SingletonComponent<Level>
 	{
 		world = new Tile[WorldSize, WorldSize];
 
-		Tile[] preplaced = FindObjectsOfType(typeof(Tile)) as Tile[];
-		
+		Tile[] preplaced = GetComponentsInChildren<Tile>();
+
 		for(int i=0, count = preplaced.Length; i<count; i++)
 		{
 			Tile tile = preplaced[i];
