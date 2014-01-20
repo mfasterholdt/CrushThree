@@ -155,18 +155,19 @@ public class Player : MonoBehaviour
 
 	void AttemptDrop()
 	{
+		if(!carrying) return;
+
 		RaycastHit2D hit = Physics2D.Raycast(transform.position, visuals.right, 1f, environmentMask);
 		
-		if(!hit)
-		{
-			Vector3 dropPos = transform.position + visuals.right;
+		if(hit) return;
 
-			carrying.transform.position = dropPos;
+		Vector3 dropPos = transform.position + visuals.right;
 
-			carrying.SetIdleState();
+		carrying.transform.position = dropPos;
 
-			carrying = null;
-		}
+		carrying.SetIdleState();
+
+		carrying = null;
 	}
 
 	void OnCollisionEnter2D(Collision2D col)
