@@ -138,19 +138,23 @@ public class Player : MonoBehaviour
 
 	void AttemptPickup()
 	{
+		//Already carrying an object
+		if(carrying) return;
+
 		RaycastHit2D hit = Physics2D.Raycast(transform.position, visuals.right, 1f, environmentMask);
 
-		if(hit)
-		{
-			TileCandy tile = hit.collider.gameObject.GetComponent<TileCandy>();
+		//No collision found
+		if(!hit) return;
 
-			if(tile)
-			{
-				carrying = tile;
+		TileCandy tile = hit.collider.gameObject.GetComponent<TileCandy>();
 
-				tile.SetCarryState();
-			}
-		}
+		//Object cannot be carried
+		if(!tile) return;
+
+		//Pickup Object
+		carrying = tile;
+
+		tile.SetCarryState();
 	}
 
 	void AttemptDrop()

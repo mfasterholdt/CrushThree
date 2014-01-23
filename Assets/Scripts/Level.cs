@@ -12,7 +12,8 @@ public class Level : SingletonComponent<Level>
 	public GameObject selectionTarget;
 
 	public Tile borderTile;
-	
+	public static Tile BorderTile;
+
 	[HideInInspector]	
 	public Tile[,] world;
 	
@@ -59,6 +60,9 @@ public class Level : SingletonComponent<Level>
 		{
 			selectionTarget = Instantiate(selectionTarget) as GameObject;
 		}
+
+		if(borderTile)
+			BorderTile = borderTile;
 
 		RegisterWorld();
 	}
@@ -387,7 +391,27 @@ public class Level : SingletonComponent<Level>
 		
 		return newTile;
 	}
-	
+
+	//Place Tile
+	public bool PlaceTile(int x, int y, Tile tile)
+	{
+		Tile currentTile = GetTile(x, y);
+
+		if(currentTile != null) 
+			return false;
+
+		tile.transform.position = new Vector3(x, y, 0);
+		tile.transform.parent = transform;
+
+		tiles.Add(tile);
+		world[x, y] = tile;
+		tile.Initialize();
+
+		return true;
+	}
+
+	public bool PlaceTile(Vector2int pos, Tile tile){ return PlaceTile(pos.x, pos.y, tile); }
+
 	//Remove Tile
 	public void RemoveTile(Tile tile)
 	{

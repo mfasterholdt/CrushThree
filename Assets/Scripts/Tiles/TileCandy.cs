@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class TileCandy : Tile 
 {
-	public enum CandyType{ Apple, Banana, Grape, Ruby, Emerald, Diamond};
+	public enum CandyType{ Apple, Banana, Grape, Ruby, Emerald, Diamond, BlueBerry};
 
 	public CandyType type;
 
@@ -34,6 +34,12 @@ public class TileCandy : Tile
 
 	public void SetBoardState()
 	{
+		if(rigidbody2D)
+			rigidbody2D.isKinematic = true;
+
+		if(collider2D)
+			collider2D.enabled = false;
+
 		//Gravity
 		spawnForce = new Vector2int(0, -1);
 
@@ -66,6 +72,9 @@ public class TileCandy : Tile
 	
 	public void SetIdleState()
 	{
+		rigidbody2D.velocity = Vector2.zero;
+		rigidbody2D.isKinematic = false;
+
 		state = IdleState;
 	}
 
@@ -88,25 +97,37 @@ public class TileCandy : Tile
 
 	private Pipe currentPipe;
 
-	public void SetPipeState(Pipe p, Vector2int pos)
+	public void SetPipeState(Pipe pipe, Vector2int pipeStart)
 	{
-		currentPipe = p;
+		currentPipe = pipe;
 
-		//***Set pipe pose as pos
+		rigidbody2D.isKinematic = true;
+
+		velocity = Vector3.zero;
+
+		MoveTile(pipeStart);
 
 		state = PipeState;
 	}
 
 	private void PipeState()
 	{
-		//***look up in pipe to check for collision
+		if(transform.position == targetPos)
+		{
+			Vector2int moveTarget = pos + currentPipe.dir;
 
-		//***possibly use old move of visuals again
+			Tile tile = currentPipe.GetTile(this, moveTarget);
+			
+			if(!tile)
+				currentPipe.MoveTile(this, moveTarget);
+			else
+				velocity = Vector3.zero;
+		}
 	}
 
 	public override void Update ()
 	{
-		if(state == BoardState)
+		if(state == BoardState || state == PipeState)
 			base.Update ();
 	}
 

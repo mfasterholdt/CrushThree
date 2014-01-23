@@ -39,7 +39,14 @@ public class Board : WorldObject
 		return startBoard;
 	}
 
-	void Update () {
-	
+	void OnDrawGizmos()
+	{
+		Gizmos.color = new Color(1, 0, 0.2f, 0.5f);
+
+		Vector3 pos = transform.position;
+		pos.x += width / 2 - 0.5f;
+		pos.y += height / 2 - 0.5f;
+
+		Gizmos.DrawWireCube(pos, Vector3.up * height + Vector3.right * width);
 	}
 }

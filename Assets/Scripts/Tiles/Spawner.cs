@@ -4,7 +4,7 @@ using System.Linq;
 
 public class Spawner : WorldObject
 {
-	public Tile[] tilePrefabs;
+	public SpawnItem[] items;
 
 	private TileCandy target;
 
@@ -15,24 +15,24 @@ public class Spawner : WorldObject
 
 	bool init;
 
+	int total;
+
 	void Start()
 	{
 		SetSpawnTarget();
+
+		for(int i = 0, count = items.Length; i < count; i++)
+		{
+			SpawnItem item = items[i];
+
+			total += item.ratio;
+		}
 	}
 
 	void SetSpawnTarget()
 	{
-		float rot = Mathf.RoundToInt(transform.rotation.eulerAngles.z / 90f); 
+		dir = new Vector2int(-transform.up.x, -transform.up.y);
 
-		if(rot == 0)
-			dir = Vector2int.down;
-		else if(rot == 1)
-			dir = Vector2int.right;
-		else if(rot == 2)
-			dir = Vector2int.up;
-		else if(rot == 3)
-			dir = Vector2int.left;
-		
 		spawnTarget = transform.position + dir.ToVector3();
 	}
 
@@ -47,13 +47,26 @@ public class Spawner : WorldObject
 	{
 		if(target == null || TileDist() >= 1)
 		{
-			int type = Random.Range(0, tilePrefabs.Length);
-						
-			GameObject newTile = Instantiate(tilePrefabs[type].gameObject, spawnTarget, Quaternion.identity) as GameObject;
+			int type = Random.Range(0, total);
+
+			SpawnItem nextItem = null;
+
+			for(int i = 0, count = items.Length; i < count; i++)
+			{
+				SpawnItem item = items[i];
+				
+				type -= item.ratio;
+
+				if(type < 0)
+				{
+					nextItem = item;
+					break;
+				}
+			}
+
+			GameObject newTile = Instantiate(nextItem.tilePrefab.gameObject, spawnTarget, Quaternion.identity) as GameObject;
 
 			target = newTile.GetComponent<TileCandy>();
-
-			//target.SetPipeState();
 		}
 
 		/*if(target == null || target.pos != spawnTarget)
@@ -86,5 +99,12 @@ public class Spawner : WorldObject
 	void FixedUpdate ()
 	{
 		Spawn ();
+	}
+
+	[System.Serializable]
+	public class SpawnItem
+	{
+		public Tile tilePrefab;
+		public int ratio;
 	}
 }

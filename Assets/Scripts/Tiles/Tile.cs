@@ -9,11 +9,11 @@ public class Tile : WorldObject
 	public GameObject visuals;
 	public bool debug;
 
-	protected Vector3 targetPos;
+	public Vector3 targetPos;
 	protected Vector2int dir;
 	
 	protected Vector2int spawnForce;
-	protected Vector3 velocity; 
+	public Vector3 velocity; 
 
 	protected float moveSpeed = 13f;
 	protected float acceleration = 50f;
