@@ -118,7 +118,7 @@ public class Player : MonoBehaviour
 		//Carry
 		if(carrying)
 		{
-			carrying.transform.position = transform.position + transform.up * 1.1f;
+			carrying.transform.position = transform.position + transform.up * 1.4f;
 		}
 
 		//Camera Follow
