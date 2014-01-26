@@ -30,8 +30,10 @@ public class Player : MonoBehaviour
 	public delegate void State();
 	public State state;
 
+	[HideInInspector]
 	public TileCandy carrying;
 
+	[HideInInspector]
 	public float facing = 1;
 
 	void Start()
@@ -60,7 +62,10 @@ public class Player : MonoBehaviour
 		if(inputX != 0)
 		{
 			facing = Mathf.Sign(inputX);
-			visuals.localRotation = Quaternion.Euler(0, facing == 1 ? 0 : 180f, 0);
+
+			Vector3 scale = visuals.localScale;
+			scale.x = facing;
+			visuals.localScale = scale;
 		}
 
 		//Climbing
@@ -69,16 +74,13 @@ public class Player : MonoBehaviour
 		if(triggers.Count > 0)
 		{
 			if(Mathf.Abs(inputY) > 0.3f)
-			{
 				nextPos.y += inputY * climbSpeed * Time.deltaTime;
-			}
 		}
 		else
 		{
 			//Gravity
 			rigidbody2D.AddForce(Vector2.up * gravity);
 		}
-	
 		
 		//Apply Movement
 		rigidbody2D.transform.position = nextPos;
@@ -113,7 +115,6 @@ public class Player : MonoBehaviour
 		{
 			AttemptDrop();
 		}
-
 		
 		//Carry
 		if(carrying)
@@ -141,7 +142,7 @@ public class Player : MonoBehaviour
 		//Already carrying an object
 		if(carrying) return;
 
-		RaycastHit2D hit = Physics2D.Raycast(transform.position, visuals.right, 1f, environmentMask);
+		RaycastHit2D hit = Physics2D.Raycast(transform.position, visuals.right * facing, 1f, environmentMask);
 
 		//No collision found
 		if(!hit) return;
@@ -161,11 +162,11 @@ public class Player : MonoBehaviour
 	{
 		if(!carrying) return;
 
-		RaycastHit2D hit = Physics2D.Raycast(transform.position, visuals.right, 1f, environmentMask);
+		RaycastHit2D hit = Physics2D.Raycast(transform.position, visuals.right * facing, 1f, environmentMask);
 		
 		if(hit) return;
 
-		Vector3 dropPos = transform.position + visuals.right;
+		Vector3 dropPos = transform.position + visuals.right * facing;
 
 		carrying.transform.position = dropPos;
 
@@ -185,7 +186,7 @@ public class Player : MonoBehaviour
 			if(dot > 0.6f)
 				grounded = true;
 			
-			float dotWall = Vector3.Dot(c.normal, Vector3.right); 
+			//float dotWall = Vector3.Dot(c.normal, Vector3.right); 
 			
 			//if(Mathf.Abs(dotWall) > 0.5f)
 			//	wallCollision = Mathf.Sign(dotWall);

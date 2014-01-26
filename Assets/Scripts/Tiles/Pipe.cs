@@ -2,7 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class Pipe : WorldObject
+public class Pipe : WorldObject, IConnectable
 {
 	public CollisionEvents entryTrigger;
 	public CollisionEvents endTrigger;
@@ -11,6 +11,7 @@ public class Pipe : WorldObject
 
 	[HideInInspector]
 	public Vector2int dir;
+
 	[HideInInspector]
 	public Vector2int pos;
 
@@ -18,8 +19,6 @@ public class Pipe : WorldObject
 	private Vector3 endPos;
 	
 	private TileCandy[] content;
-
-	private TileCandy exitTile;
 
 	private List<Collider2D> tilesAtEntry = new List<Collider2D>();
 	private List<Collider2D> tileAtEnd = new List<Collider2D>();
@@ -48,8 +47,7 @@ public class Pipe : WorldObject
 		if(content[0] == null)
 		{
 			content[0] = tile;
-
-			tile.SetPipeState(this, pos);  		
+			tile.SetPipeState(this, pos); 
 
 			return true;
 		}
@@ -61,90 +59,113 @@ public class Pipe : WorldObject
 
 	void FixedUpdate()
 	{
-		//Inject tiles at entry?
-		if(tilesAtEntry.Count > 0)
+		//Inject tiles at entry
+		for(int i = 0, count = tilesAtEntry.Count; i < count; i++)
 		{
-			for(int i = 0, count = tilesAtEntry.Count; i < count; i++)
+			Collider2D col = tilesAtEntry[i];
+
+			float dist = Mathf.Abs(entryPos.x - col.transform.position.x) + Mathf.Abs(entryPos.y - col.transform.position.y);
+
+			if(dist < 0.1f)
 			{
-				Collider2D col = tilesAtEntry[i];
+				TileCandy tile = col.GetComponent<TileCandy>(); 
 
-				float dist = Mathf.Abs(entryPos.x - col.transform.position.x) + Mathf.Abs(entryPos.y - col.transform.position.y);
-
-				if(dist < 0.2f)
-				{
-					TileCandy tile = col.GetComponent<TileCandy>(); 
-
-					if(tile)
-						AttemptInject(tile);
-				}
+				if(tile)
+					AttemptInject(tile);
 			}
 		}
 	}
 
-	public void MoveTile(Tile tile, Vector2int target)
+	public bool MoveTile(TileCandy tile, Vector2int target)
 	{
-		Vector2int previousPos = pos - tile.pos;
-		int previousIndex = dir.y != 0 ? previousPos.y : previousPos.x;
-		content[previousIndex] = null;
-
-		Vector2int targetPos = pos - target;
-		int targetIndex = dir.y != 0 ? targetPos.y : targetPos.x;
-		content[targetIndex] = tile as TileCandy;
-
+		//Is there a tile in the way?
+		Tile targetTile = GetTile(tile, target);
+		if(targetTile) return false;
+	
+		//Move tile
+		content[PosToIndex(tile.pos)] = null;
+		content[PosToIndex(target)] = tile as TileCandy;
 		tile.MoveTile(target);
-	}
 
+		return true;
+	}
+	
 	public Tile GetTile(TileCandy tile, Vector2int target)
 	{
-		Vector2int pipePos = pos - target;
+		int index = PosToIndex(target);
 
-		int index = dir.y != 0 ? pipePos.y : pipePos.x;
-
-		if(connector)
+		if(index == content.Length - 1)
 		{
-			if(index >= content.Length)
-			{
-				Splitter splitter = connector.GetComponent<Splitter>();
-
-				if(splitter)
-				{
-					if(splitter.NeedTileCheck(tile))
-						content[content.Length-1] = null;
-				}
-				else
-				{
-
-					Pipe pipe = connector.GetComponent<Pipe>();
-
-					if(pipe)
-					{
-						if(pipe.AttemptInject(tile))
-							content[content.Length-1] = null;
-					}
-				}
-
+			if(tileAtEnd.Count != 0)
 				return Level.BorderTile;
-			}
 		}
-		else
+		else if(index == content.Length)
 		{
-			if(index >= content.Length - 1)
-			{
-				if(tileAtEnd.Count == 0)
-				{
-					tile.SetIdleState();
-					return null;
-				}
-				else
-				{
-					return Level.BorderTile;
-				}
-			}
+			return Level.BorderTile;
 		}
 
 		return content[index];
 	}
 
+	public bool CheckEnd(TileCandy tile)
+	{
+		int index = PosToIndex(tile.pos);
+
+		//Not at the end
+		if(index != content.Length -1)
+			return false;
+
+		content[index] = null;
+
+		//Place in end list
+		Collider2D col = tile.GetComponent<Collider2D>();
+		if(col)
+			OnEndEnter(col);
+
+		return true;
+	}
+
+	public bool CheckConnector(TileCandy tile)
+	{
+		int index = PosToIndex(tile.pos);
+
+		//Not at the end
+		if(index != content.Length - 1)
+			return false;
+
+		IConnectable c = connector as IConnectable;
+
+		//No connectable
+		if(c == null)
+			return false; 
+
+		bool moved = c.RecieveCheck(tile);
+
+		//Not received
+		if(!moved) 
+			return false; 
+
+		//Move
+		content[index] = null;
+
+		return true;
+	}
+
+	public bool RecieveCheck(TileCandy tile)
+	{
+		return AttemptInject(tile);
+	}
+
+	//Converts world position to pipe index
+	public int PosToIndex(Vector2int p)
+	{
+		Vector2int posDiff = pos - p;
+
+		//***Could possibly be done without a magnitude call
+
+		return (int)posDiff.Magnitude; //dir.y != 0 ? posDiff.y : posDiff.x;	
+	}
+	
 	void OnEndExit(Collider2D col)
 	{
 		tileAtEnd.Remove(col);
@@ -152,7 +173,8 @@ public class Pipe : WorldObject
 	
 	void OnEndEnter(Collider2D col)
 	{
-		tileAtEnd.Add(col);
+		if(!tileAtEnd.Contains(col))
+			tileAtEnd.Add(col);
 	}
 
 	void OnEntryExit(Collider2D col)
@@ -162,6 +184,7 @@ public class Pipe : WorldObject
 
 	void OnEntryEnter(Collider2D col)
 	{
-		tilesAtEntry.Add(col);
+		if(!tilesAtEntry.Contains(col))
+			tilesAtEntry.Add(col);
 	}
 }

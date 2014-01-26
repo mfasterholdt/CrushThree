@@ -1,11 +1,9 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Splitter : WorldObject
+public class Splitter : WorldObject, IConnectable
 {
 	public Board board;
-
-	Vector3 testPos;
 
 	int rightIndex;
 	int leftIndex;
@@ -18,9 +16,8 @@ public class Splitter : WorldObject
 		heightIndex = (int)board.transform.position.y + board.height + 1;
 	}
 
-	public bool NeedTileCheck(TileCandy tile)
+	public bool RecieveCheck(TileCandy tile)
 	{
-
 		for(int i = leftIndex; i <= rightIndex; i++)
 		{
 			bool success = Level.Instance.PlaceTile(i, heightIndex, tile);
@@ -28,7 +25,7 @@ public class Splitter : WorldObject
 			if(success)
 				return true;
 		}
-
+		
 		return false;
 	}
 }

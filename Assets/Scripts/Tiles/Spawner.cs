@@ -64,9 +64,12 @@ public class Spawner : WorldObject
 				}
 			}
 
-			GameObject newTile = Instantiate(nextItem.tilePrefab.gameObject, spawnTarget, Quaternion.identity) as GameObject;
+			if(nextItem != null)
+			{
+				GameObject newTile = Instantiate(nextItem.tilePrefab.gameObject, spawnTarget, Quaternion.identity) as GameObject;
 
-			target = newTile.GetComponent<TileCandy>();
+				target = newTile.GetComponent<TileCandy>();
+			}
 		}
 
 		/*if(target == null || target.pos != spawnTarget)

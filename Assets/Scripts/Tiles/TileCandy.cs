@@ -6,32 +6,36 @@ public class TileCandy : Tile
 {
 	public enum CandyType{ Apple, Banana, Grape, Ruby, Emerald, Diamond, BlueBerry};
 
+	//Properti Settings
 	public CandyType type;
+	
+	private Pipe currentPipe;
 
 	public bool glitch;
-
 	private Material initialMaterial;
 	private Material glitchMaterial;
 	private float glitchTimer;
 
-	private float gravity = -15f;
+	//Physics Settings
+	private float gravity = -15f; //Rigidbody gravity
+	
+	//Grid Settings
+	protected Vector3 velocity; 
+	protected float moveSpeedMax = 22f;
+	protected float acceleration = 50f;
 
-	private delegate void State();
-	State state;
 
-	public void Start()
+	public override void Start()
 	{
-		if(state == null)
+		base.Start();
+
+		if(rigidbody2D && !rigidbody2D.isKinematic)
 			SetIdleState();
 	}
 
-	public override void Initialize()
-	{
-		base.Initialize();
+	//--//States//--//
 
-		SetBoardState();
-	}
-
+	//--//Board
 	public void SetBoardState()
 	{
 		if(rigidbody2D)
@@ -40,16 +44,28 @@ public class TileCandy : Tile
 		if(collider2D)
 			collider2D.enabled = false;
 
-		//Gravity
-		spawnForce = new Vector2int(0, -1);
-
-		state = BoardState;
+		state.SetState(BoardState, BoardStateVisual);
 	}
 
 	private void BoardState()
 	{
-		base.FixedUpdate ();
-		
+		//Falling
+		if(transform.position == targetPos)
+		{
+			Vector2int moveTarget = pos + Vector2int.down;
+			
+			Tile tile = Level.Instance.GetTile(moveTarget);
+			
+			if(tile == null)
+				Level.Instance.MoveTile(this, moveTarget);
+		}
+	}
+
+	private void BoardStateVisual()
+	{
+		MoveTowardsTarget(true, false);
+
+		//Glitch blinking
 		if(glitchTimer > 0)
 		{
 			glitchTimer -= Time.deltaTime;
@@ -69,13 +85,14 @@ public class TileCandy : Tile
 			}
 		}
 	}
-	
+
+	//--//Idle
 	public void SetIdleState()
 	{
 		rigidbody2D.velocity = Vector2.zero;
 		rigidbody2D.isKinematic = false;
 
-		state = IdleState;
+		state.SetState(IdleState, null);
 	}
 
 	private void IdleState()
@@ -85,9 +102,10 @@ public class TileCandy : Tile
 			rigidbody2D.AddForce(Vector2.up * gravity);
 	}
 
+	//--//Carry
 	public void SetCarryState()
 	{
-		state = CarryState;
+		state.SetState(CarryState, null);
 	}
 
 	private void CarryState()
@@ -95,52 +113,98 @@ public class TileCandy : Tile
 
 	}
 
-	private Pipe currentPipe;
-
+	//--//Pipe
 	public void SetPipeState(Pipe pipe, Vector2int pipeStart)
 	{
 		currentPipe = pipe;
 
 		rigidbody2D.isKinematic = true;
-
 		velocity = Vector3.zero;
+		RoundPosition();
 
 		MoveTile(pipeStart);
 
-		state = PipeState;
+		state.SetState(PipeState, PipeStateVisual);
 	}
 
 	private void PipeState()
 	{
+		//When target position is reached, attempt to move to next tile
 		if(transform.position == targetPos)
 		{
-			Vector2int moveTarget = pos + currentPipe.dir;
+			bool tileMoved = currentPipe.MoveTile(this, pos + currentPipe.dir);
 
-			Tile tile = currentPipe.GetTile(this, moveTarget);
-			
-			if(!tile)
-				currentPipe.MoveTile(this, moveTarget);
-			else
+			if(!tileMoved)
+			{
 				velocity = Vector3.zero;
+
+				if(currentPipe.connector)
+				{
+					currentPipe.CheckConnector(this);
+				}
+				else
+				{
+					if(currentPipe.CheckEnd(this))
+						SetIdleState();
+				}
+			}
 		}
 	}
 
-	public override void Update ()
+	private void PipeStateVisual()
 	{
-		if(state == BoardState || state == PipeState)
-			base.Update ();
+		MoveTowardsTarget();
 	}
 
-	public override void FixedUpdate()
+	//--//Helper Functions//--//
+	
+	public virtual void MoveTowardsTarget(bool breakX = false, bool breakY = false)
 	{
-		if(state != null)
-			state();
+		if(targetPos != transform.position)
+		{
+			Vector3 diff = (targetPos - transform.position);
+			
+			//Accelerate
+			velocity += diff.normalized * Time.deltaTime * acceleration;
+			
+			velocity.x = Mathf.Min(velocity.x, moveSpeedMax);
+			velocity.y = Mathf.Min(velocity.y, moveSpeedMax);
+			
+			//Predict
+			Vector3 nextPos = transform.position + velocity * Time.deltaTime;
+			
+			bool overshootX = Mathf.Sign(diff.x) != Mathf.Sign(targetPos.x - nextPos.x);
+			bool overshootY = Mathf.Sign(diff.y) != Mathf.Sign(targetPos.y - nextPos.y);
+			
+			if(overshootX || overshootY)
+			{
+				nextPos = targetPos;
+				
+				//Check underneath
+				bool isGrounded = CheckGround(pos.x, pos.y);
+				
+				if(isGrounded)
+				{
+					velocity = Vector3.zero;
+					Landing();
+				}
+				else if(breakX)
+					velocity.x = 0;
+				else if(breakY)
+					velocity.y = 0;
+			}
+			
+			transform.position = nextPos;
+		}
 	}
 
-	public override void Landing ()
+	public void AddVelocity(Vector3 add)
 	{
-		base.Landing ();
+		velocity += add;
+	}
 
+	public void Landing ()
+	{
 		Level.Instance.Match(this);
 	}
 

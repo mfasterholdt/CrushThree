@@ -11,7 +11,7 @@ public class Board : WorldObject
 
 	private List<TileCandy> startBoard;
 
-	public List<TileCandy> Initialize () 
+	public List<TileCandy> CreateBoard () 
 	{
 		startBoard = new List<TileCandy>();
 
@@ -31,6 +31,8 @@ public class Board : WorldObject
 				int type = Random.Range(0, tilePrefabs.Length);
 
 				TileCandy newTile = Level.Instance.CreateTile(pos, tilePrefabs[type].gameObject) as TileCandy;		
+
+				newTile.SetBoardState();
 
 				startBoard.Add(newTile);
 			}

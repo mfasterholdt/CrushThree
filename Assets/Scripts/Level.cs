@@ -36,9 +36,6 @@ public class Level : SingletonComponent<Level>
 	private Player player;
 
 	private Tile pickedTile;
-	
-	public delegate void StepEvent();
-	public event StepEvent OnStep;
 
 	private bool matchTransition;
 	private float matchTimer;
@@ -76,7 +73,6 @@ public class Level : SingletonComponent<Level>
 		for(int i=0, count = preplaced.Length; i<count; i++)
 		{
 			Tile tile = preplaced[i];
-			tile.Initialize();
 			
 			Tile current = world[tile.pos.x, tile.pos.y];
 			
@@ -93,7 +89,7 @@ public class Level : SingletonComponent<Level>
 		}
 
 		//Initialize boards
-		List<TileCandy>startBoard = board.Initialize();
+		List<TileCandy>startBoard = board.CreateBoard();
 
 		//Create Start Glitches
 		glitches = new List<TileCandy>();
@@ -387,8 +383,6 @@ public class Level : SingletonComponent<Level>
 		tiles.Add(newTile);
 		world[pos.x, pos.y] = newTile;
 		
-		newTile.Initialize();
-		
 		return newTile;
 	}
 
@@ -400,12 +394,20 @@ public class Level : SingletonComponent<Level>
 		if(currentTile != null) 
 			return false;
 
-		tile.transform.position = new Vector3(x, y, 0);
+		tile.targetPos = new Vector3(x, y, 0);
+		tile.transform.position = tile.targetPos;
 		tile.transform.parent = transform;
+
+		tile.pos.x = x;
+		tile.pos.y = y;
 
 		tiles.Add(tile);
 		world[x, y] = tile;
-		tile.Initialize();
+
+		TileCandy tileCandy = tile as TileCandy;
+
+		if(tileCandy)
+			tileCandy.SetBoardState();
 
 		return true;
 	}
