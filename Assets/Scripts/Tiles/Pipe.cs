@@ -7,7 +7,7 @@ public class Pipe : WorldObject, IConnectable
 	public CollisionEvents entryTrigger;
 	public CollisionEvents endTrigger;
 
-	public WorldObject connector;
+	public WorldObject connectedTo;
 
 	[HideInInspector]
 	public Vector2int dir;
@@ -25,6 +25,9 @@ public class Pipe : WorldObject, IConnectable
 
 	void Start () 
 	{
+		if(connectedTo != null && !(connectedTo is IConnectable))
+			Debug.LogError("illegal connection", gameObject);
+
 		pos = new Vector2int(transform.position.x, transform.position.y);
 
 		entryPos = entryTrigger.transform.position;
@@ -133,17 +136,19 @@ public class Pipe : WorldObject, IConnectable
 		if(index != content.Length - 1)
 			return false;
 
-		IConnectable c = connector as IConnectable;
+		IConnectable c = connectedTo as IConnectable;
 
 		//No connectable
 		if(c == null)
 			return false; 
 
-		bool moved = c.RecieveCheck(tile);
-
-		//Not received
-		if(!moved) 
+		//Ready to receive?
+		if(!c.RecieveCheck()) 
 			return false; 
+
+		bool moved = c.ParseTile(tile);
+		if(!moved)
+			return false;
 
 		//Move
 		content[index] = null;
@@ -151,9 +156,19 @@ public class Pipe : WorldObject, IConnectable
 		return true;
 	}
 
-	public bool RecieveCheck(TileCandy tile)
+	public bool RecieveCheck(TileCandy tile = null)
+	{
+		return content[0] == null;
+	}
+
+	public bool ParseTile(TileCandy tile)
 	{
 		return AttemptInject(tile);
+	}
+
+	public Vector3 GetConnectionPos()
+	{
+		return transform.position;
 	}
 
 	//Converts world position to pipe index
@@ -161,9 +176,9 @@ public class Pipe : WorldObject, IConnectable
 	{
 		Vector2int posDiff = pos - p;
 
-		//***Could possibly be done without a magnitude call
+		int index = (int)Mathf.Abs(posDiff.x) + Mathf.Abs(posDiff.y);
 
-		return (int)posDiff.Magnitude; //dir.y != 0 ? posDiff.y : posDiff.x;	
+		return index;
 	}
 	
 	void OnEndExit(Collider2D col)

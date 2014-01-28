@@ -138,7 +138,7 @@ public class TileCandy : Tile
 			{
 				velocity = Vector3.zero;
 
-				if(currentPipe.connector)
+				if(currentPipe.connectedTo)
 				{
 					currentPipe.CheckConnector(this);
 				}

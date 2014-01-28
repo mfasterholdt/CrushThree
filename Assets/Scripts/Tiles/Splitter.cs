@@ -16,16 +16,26 @@ public class Splitter : WorldObject, IConnectable
 		heightIndex = (int)board.transform.position.y + board.height + 1;
 	}
 
-	public bool RecieveCheck(TileCandy tile)
+	public bool RecieveCheck(TileCandy tile = null)
+	{
+		return true;
+	}
+
+	public bool ParseTile(TileCandy tile)
 	{
 		for(int i = leftIndex; i <= rightIndex; i++)
 		{
 			bool success = Level.Instance.PlaceTile(i, heightIndex, tile);
-
+			
 			if(success)
 				return true;
 		}
 		
 		return false;
+	}
+
+	public Vector3 GetConnectionPos()
+	{
+		return transform.position;
 	}
 }

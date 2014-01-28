@@ -3,8 +3,14 @@ using System.Collections;
 
 interface IConnectable
 {
-	//When true the connector takes control
-	bool RecieveCheck(TileCandy tile);
+	//Connection position
+	Vector3 GetConnectionPos();
+
+	//Check if the object is ready to receive
+	bool RecieveCheck(TileCandy tile = null);
+
+	//Parse tile to the new object
+	bool ParseTile(TileCandy tile);
 }
 
 public class WorldObject : MonoBehaviour 

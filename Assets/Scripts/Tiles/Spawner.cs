@@ -5,6 +5,7 @@ using System.Linq;
 public class Spawner : WorldObject
 {
 	public SpawnItem[] items;
+	public WorldObject connectedTo;
 
 	private TileCandy target;
 
@@ -19,7 +20,8 @@ public class Spawner : WorldObject
 
 	void Start()
 	{
-		SetSpawnTarget();
+		if(connectedTo != null && !(connectedTo is IConnectable))
+			Debug.LogError("illegal connection", gameObject);
 
 		for(int i = 0, count = items.Length; i < count; i++)
 		{
@@ -36,72 +38,70 @@ public class Spawner : WorldObject
 		spawnTarget = transform.position + dir.ToVector3();
 	}
 
-	float TileDist()
-	{
-		float dist = Mathf.Abs(target.transform.position.x - spawnTarget.x) + Mathf.Abs(target.transform.position.y - spawnTarget.y);
-
-		return dist;
-	}
-
 	void Spawn()
 	{
-		if(target == null || TileDist() >= 1)
+		if(connectedTo)
 		{
-			int type = Random.Range(0, total);
+			//Connected
+			IConnectable c = connectedTo as IConnectable;
 
-			SpawnItem nextItem = null;
+			if(c == null || !c.RecieveCheck())
+				return;
 
-			for(int i = 0, count = items.Length; i < count; i++)
+			Vector3 pos = c.GetConnectionPos();
+			TileCandy newTile = SpawnNextItem(pos);
+
+			c.ParseTile(newTile);
+
+		}
+		else if(target == null || TileDist() >= 0.75f)
+		{
+			//Spawn Free
+			SetSpawnTarget();
+
+			target = SpawnNextItem(spawnTarget);
+		}
+	}
+
+	TileCandy SpawnNextItem(Vector3 pos)
+	{
+		//Choose Item
+		int type = Random.Range(0, total);
+		SpawnItem nextItem = null;
+		
+		for(int i = 0, count = items.Length; i < count; i++)
+		{
+			SpawnItem item = items[i];
+			
+			type -= item.ratio;
+			
+			if(type < 0)
 			{
-				SpawnItem item = items[i];
-				
-				type -= item.ratio;
-
-				if(type < 0)
-				{
-					nextItem = item;
-					break;
-				}
-			}
-
-			if(nextItem != null)
-			{
-				GameObject newTile = Instantiate(nextItem.tilePrefab.gameObject, spawnTarget, Quaternion.identity) as GameObject;
-
-				target = newTile.GetComponent<TileCandy>();
+				nextItem = item;
+				break;
 			}
 		}
 
-		/*if(target == null || target.pos != spawnTarget)
-		{
-			Tile tile = Level.Instance.GetTile(spawnTarget);
+		//Item found?
+		if(nextItem == null)
+			return null;
 
-			if(tile)
-			{
-				target = tile;
-			}
-			else
-			{
-				type = Random.Range(0, tilePrefabs.Length);
+		//Spawn Item
+		GameObject newObj = Instantiate(nextItem.tilePrefab.gameObject, pos, Quaternion.identity) as GameObject;
 
-				target = Level.Instance.CreateTile(spawnTarget, tilePrefabs[type].gameObject);
-
-				if(Level.Instance.glitches.Count < Level.Instance.glitchCount)
-				{
-					if(Level.Instance.glitches.Find(x => (int)x.type == type) == null)
-					{
-						(target as TileCandy).BecomeGlitch();
-					}
-				}
-
-				target.AddVelocity(dir.ToVector3() * spawnForce);
-			}
-		}*/
+		return newObj.GetComponent<TileCandy>();
 	}
 
 	void FixedUpdate ()
 	{
 		Spawn ();
+	}
+	
+	float TileDist()
+	{
+		float dist = Mathf.Abs(target.transform.position.x - spawnTarget.x) + Mathf.Abs(target.transform.position.y - spawnTarget.y);
+		
+		return dist;
 	}
 
 	[System.Serializable]
