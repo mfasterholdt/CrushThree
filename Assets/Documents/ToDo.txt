@@ -1,0 +1,9 @@
+//Need
+-Better handling of jumping to avoid super jumps
+-Player states to handle ladders and future additions
+-Slot for placing tiles
+-Power slot, turn things on
+-Spawner slots, determine what should be spawned
+
+//Nice
+-Candy should preserve velocity when entering pipes
