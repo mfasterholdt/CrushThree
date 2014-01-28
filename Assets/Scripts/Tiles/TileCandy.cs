@@ -105,6 +105,8 @@ public class TileCandy : Tile
 	//--//Carry
 	public void SetCarryState()
 	{
+		rigidbody2D.isKinematic = false;
+
 		state.SetState(CarryState, null);
 	}
 
@@ -152,6 +154,28 @@ public class TileCandy : Tile
 	}
 
 	private void PipeStateVisual()
+	{
+		MoveTowardsTarget();
+	}
+
+	//--//Slot
+	public void SetSlotState(Vector2int p)
+	{
+		MoveTile(p);
+
+		rigidbody2D.isKinematic = true;
+
+		velocity = Vector3.zero;
+
+		state.SetState(SlotState, SlotStateVisual);
+	}
+
+	public void SlotState()
+	{
+	
+	}
+
+	public void SlotStateVisual()
 	{
 		MoveTowardsTarget();
 	}
