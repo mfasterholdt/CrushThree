@@ -31,6 +31,37 @@ ModelImporter:
     100050: rig_ShoulderR
     100052: rig_Spine
     100054: rig_Wires
+    100056: Mesh_Player
+    100058: Rig_Cord
+    100060: Rig_ElbowL
+    100062: Rig_ElbowR
+    100064: Rig_EyeL
+    100066: Rig_EyeR
+    100068: Rig_Face
+    100070: Rig_FingerLA
+    100072: Rig_FingerLB
+    100074: Rig_FingerLC
+    100076: Rig_FingerRA
+    100078: Rig_FingerRB
+    100080: Rig_FingerRC
+    100082: Rig_FootL
+    100084: Rig_FootR
+    100086: Rig_HandL
+    100088: Rig_HandR
+    100090: Rig_Hat
+    100092: Rig_Head
+    100094: Rig_KneeL
+    100096: Rig_KneeR
+    100098: Rig_LegL
+    100100: Rig_LegR
+    100102: Rig_Mouth
+    100104: Rig_NoseBack
+    100106: Rig_NoseTip
+    100108: Rig_Root
+    100110: Rig_ShoulderL
+    100112: Rig_ShoulderR
+    100114: Rig_Spine
+    100116: Rig_Wires
     400000: Mesh
     400002: //RootNode
     400004: PlayerMesh
@@ -59,11 +90,44 @@ ModelImporter:
     400050: rig_ShoulderR
     400052: rig_Spine
     400054: rig_Wires
+    400056: Mesh_Player
+    400058: Rig_Cord
+    400060: Rig_ElbowL
+    400062: Rig_ElbowR
+    400064: Rig_EyeL
+    400066: Rig_EyeR
+    400068: Rig_Face
+    400070: Rig_FingerLA
+    400072: Rig_FingerLB
+    400074: Rig_FingerLC
+    400076: Rig_FingerRA
+    400078: Rig_FingerRB
+    400080: Rig_FingerRC
+    400082: Rig_FootL
+    400084: Rig_FootR
+    400086: Rig_HandL
+    400088: Rig_HandR
+    400090: Rig_Hat
+    400092: Rig_Head
+    400094: Rig_KneeL
+    400096: Rig_KneeR
+    400098: Rig_LegL
+    400100: Rig_LegR
+    400102: Rig_Mouth
+    400104: Rig_NoseBack
+    400106: Rig_NoseTip
+    400108: Rig_Root
+    400110: Rig_ShoulderL
+    400112: Rig_ShoulderR
+    400114: Rig_Spine
+    400116: Rig_Wires
     4300000: PlayerMesh
+    4300002: Mesh_Player
     7400000: Take 001
     9500000: //RootNode
     11100000: //RootNode
     13700000: PlayerMesh
+    13700002: Mesh_Player
   materials:
     importMaterials: 0
     materialName: 0
