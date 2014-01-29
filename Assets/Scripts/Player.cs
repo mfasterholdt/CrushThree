@@ -83,7 +83,11 @@ public class Player : MonoBehaviour
 		}
 		
 		//Apply Movement
-		rigidbody2D.transform.position = nextPos;
+		Vector3 vel = rigidbody2D.velocity;
+		vel.x = Time.deltaTime * inputX * playerMoveSpeed;
+		rigidbody2D.velocity = vel;
+
+		//rigidbody2D.transform.position = nextPos;
 	}
 	
 	void FixedUpdate()
