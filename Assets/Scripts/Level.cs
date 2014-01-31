@@ -42,9 +42,11 @@ public class Level : SingletonComponent<Level>
 	private float matchDelay = 0.15f;
 
 	private bool dragging;
-
+	
 	void Start () 
 	{
+		Camera.main.transparencySortMode = TransparencySortMode.Orthographic;
+
 		if(selectionPrefab)
 		{
 			GameObject selectionObj = Instantiate(selectionPrefab) as GameObject;
@@ -109,6 +111,7 @@ public class Level : SingletonComponent<Level>
 				break;
 			}
 		}
+
 	}
 	
 	void OnSelectionClick(Selection sender, Vector3 pos)

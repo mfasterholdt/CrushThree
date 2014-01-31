@@ -39,6 +39,9 @@ public class Player : MonoBehaviour
 	void Start()
 	{
 		cam = Camera.main;
+
+		Camera.main.transparencySortMode = TransparencySortMode.Orthographic;
+
 		SetMoveState();
 	}
 
@@ -134,7 +137,7 @@ public class Player : MonoBehaviour
 
 		Vector3 nextCamPos = cam.transform.position;*/
 		
-		Vector3 camTarget = transform.position - transform.forward * cameraOffset.x + transform.up * cameraOffset.y;
+		Vector3 camTarget = transform.position - transform.forward * cameraOffset.z + transform.up * cameraOffset.y;
 		//nextCamPos += ((camTarget - nextCamPos) * Time.deltaTime * 4.25f) * cameraEaseIn;*
 		
 		cam.transform.position = camTarget;
