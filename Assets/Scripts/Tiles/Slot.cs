@@ -6,7 +6,7 @@ public class Slot : Tile
 {
 	public CollisionEvents entryTrigger;
 
-	private TileCandy currentTile;
+	public TileCandy currentTile;
 	
 	public override void Start () 
 	{

@@ -5,6 +5,7 @@ using System.Linq;
 public class Spawner : WorldObject
 {
 	public SpawnItem[] items;
+	public SpawnerList spawnerList;
 	public WorldObject connectedTo;
 
 	private TileCandy target;
@@ -56,29 +57,39 @@ public class Spawner : WorldObject
 		}
 		else if(target == null || TileDist() >= 0.75f)
 		{
-			//Spawn Free
+			//Spawn Frees
 			SetSpawnTarget();
 
 			target = SpawnNextItem(spawnTarget);
+
+			target.SetIdleState();
 		}
 	}
 
 	TileCandy SpawnNextItem(Vector3 pos)
 	{
-		//Choose Item
-		int type = Random.Range(0, total);
-		SpawnItem nextItem = null;
-		
-		for(int i = 0, count = items.Length; i < count; i++)
+		Tile nextItem = null;
+
+		if(spawnerList)
 		{
-			SpawnItem item = items[i];
+			nextItem = spawnerList.GetSpawnTile() as Tile;
+		}
+		else
+		{
+			//Choose Item
+			int type = Random.Range(0, total);
 			
-			type -= item.ratio;
-			
-			if(type < 0)
+			for(int i = 0, count = items.Length; i < count; i++)
 			{
-				nextItem = item;
-				break;
+				SpawnItem item = items[i];
+				
+				type -= item.ratio;
+				
+				if(type < 0)
+				{
+					nextItem = item.tilePrefab;
+					break;
+				}
 			}
 		}
 
@@ -86,8 +97,9 @@ public class Spawner : WorldObject
 		if(nextItem == null)
 			return null;
 
+
 		//Spawn Item
-		GameObject newObj = Instantiate(nextItem.tilePrefab.gameObject, pos, Quaternion.identity) as GameObject;
+		GameObject newObj = Instantiate(nextItem.gameObject, pos, Quaternion.identity) as GameObject;
 
 		return newObj.GetComponent<TileCandy>();
 	}
@@ -100,7 +112,7 @@ public class Spawner : WorldObject
 	float TileDist()
 	{
 		float dist = Mathf.Abs(target.transform.position.x - spawnTarget.x) + Mathf.Abs(target.transform.position.y - spawnTarget.y);
-		
+
 		return dist;
 	}
 
