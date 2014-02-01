@@ -5,15 +5,15 @@ using System.Collections.Generic;
 public class Player : MonoBehaviour
 {	
 	public Transform visuals;
-	public float playerMoveSpeed = 5f;
+
+	public float moveSpeed = 275f;
+	public float airControl = 0.7f;
 	public float climbSpeed = 5f;
 	public float jumpForce = 50f;
 	public float gravity = -15f;
 
 	public Vector3 cameraOffset;
 	private Camera cam;
-	
-	private Vector3 moveDir;
 
 	private bool grounded = true;
 	private float vel;
@@ -27,8 +27,11 @@ public class Player : MonoBehaviour
 	public LayerMask environmentMask;
 	//****Create STATES to handle all the stuffs!!!
 
-	public delegate void State();
-	public State state;
+	public Animation anim;
+	public AnimationClip animIdle;
+	public AnimationClip animJump;
+
+	public State state = new State();
 
 	[HideInInspector]
 	public TileCandy carrying;
@@ -45,103 +48,150 @@ public class Player : MonoBehaviour
 		SetMoveState();
 	}
 
+	//--//State
+
+	//Move
 	void SetMoveState()
 	{
-		state = MoveState;
+		anim.CrossFade(animIdle.name, 0.2f);
+		state.SetState(MoveState, MoveStateVisual);
 	}
 
 	void MoveState()
 	{
 		//Movement
-		Vector3 nextPos = rigidbody2D.transform.position;
-		float inputX = Input.GetAxis("Horizontal");
-		
-		if(wallCollision == 0 || Mathf.Sign(inputX) == wallCollision)		
-		{
-			nextPos.x += inputX * playerMoveSpeed * Time.deltaTime;
-		}
-
-		//Rotating
-		if(inputX != 0)
-		{
-			facing = Mathf.Sign(inputX);
-
-			Vector3 scale = visuals.localScale;
-			scale.x = facing;
-			visuals.localScale = scale;
-		}
+		BasicMovement(moveSpeed);
 
 		//Climbing
-		float inputY = Input.GetAxis("Vertical");
+		/*float inputY = Input.GetAxis("Vertical");
 		
 		if(triggers.Count > 0)
 		{
 			if(Mathf.Abs(inputY) > 0.3f)
 				nextPos.y += inputY * climbSpeed * Time.deltaTime;
-		}
-		else
-		{
-			//Gravity
-			rigidbody2D.AddForce(Vector2.up * gravity);
-		}
-		
-		//Apply Movement
-		Vector3 vel = rigidbody2D.velocity;
-		vel.x = Time.deltaTime * inputX * playerMoveSpeed;
-		rigidbody2D.velocity = vel;
-
-		//rigidbody2D.transform.position = nextPos;
-	}
-	
-	void FixedUpdate()
-	{		
-		if(state != null)
-			state();
+		}*/
 	}
 
-	void Update()
+	void MoveStateVisual()
 	{
 		//Jump
-		moveDir.x = Input.GetAxis("Horizontal");
-		moveDir.y = Input.GetAxis("Vertical");
-		
 		if(grounded && Input.GetKey(KeyCode.Space))
-		{
-			rigidbody2D.AddForce(Vector2.up * jumpForce);
-			grounded = false;
-		}
-
+			SetJumpState();
+		
 		//Pickup
 		if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
 		{
 			AttemptPickup();
 		}
-
+		
 		//Drop
 		if(Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
 		{
 			AttemptDrop();
 		}
+	}
+
+	//Jump
+	void SetJumpState()
+	{
+		rigidbody2D.AddForce(Vector2.up * jumpForce);
+		grounded = false;
+
+		anim.CrossFadeQueued(animJump.name, 0.2f, QueueMode.PlayNow);
+
+		state.SetState(JumpState, JumpStateVisual);
+	}
+
+	void JumpState()
+	{
+		BasicMovement(moveSpeed * airControl);
+
+		//Climbing
+		/*float inputY = Input.GetAxis("Vertical");
 		
+		if(triggers.Count > 0)
+		{
+			if(Mathf.Abs(inputY) > 0.3f)
+				nextPos.y += inputY * climbSpeed * Time.deltaTime;
+		}*/
+	
+		//Land
+		if(grounded)
+			SetMoveState();
+	}
+
+	void JumpStateVisual()
+	{
+		//Pickup
+		if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+		{
+			AttemptPickup();
+		}
+		
+		//Drop
+		if(Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
+		{
+			AttemptDrop();
+		}
+	}
+
+	//General Updates
+	void FixedUpdate()
+	{		
+		if(state.FixedUpdate != null)
+			state.FixedUpdate();
+
+		//Gravity
+		rigidbody2D.AddForce(Vector2.up * gravity);
+
+	}
+
+	void Update()
+	{
+		if(state.Update != null)
+			state.Update();
+
+		//Rotating
+		Vector3 scale = visuals.localScale;
+		scale.x = facing;
+		visuals.localScale = scale;
+
 		//Carry
 		if(carrying)
-		{
 			carrying.transform.position = transform.position + transform.up * 1.4f;
-		}
 
 		//Camera Follow
-		// *** make camera ease in on movement, (nextPos.x != rigidbody2D.transform.position.x)
-
-		/*cameraEaseIn += Time.deltaTime * 0.3f;
-		cameraEaseIn = Mathf.Min (cameraEaseIn, 1);
-
-		Vector3 nextCamPos = cam.transform.position;*/
-		
 		Vector3 camTarget = transform.position - transform.forward * cameraOffset.z + transform.up * cameraOffset.y;
-		//nextCamPos += ((camTarget - nextCamPos) * Time.deltaTime * 4.25f) * cameraEaseIn;*
-		
 		cam.transform.position = camTarget;
-		
+	}
+
+	//--//Helper functions
+
+	void BasicMovement(float speed)
+	{
+		float inputX = Input.GetAxis("Horizontal");
+
+		//No input
+		if(inputX == 0)
+			return;
+
+		//Wall Collision
+		Ray2D wallRay = new Ray2D(transform.position + Vector3.up * -0.8f, Vector3.right * Mathf.Sign(inputX));
+		RaycastHit2D wallHit = Physics2D.Raycast(wallRay.origin, wallRay.direction, 0.3f, environmentMask);
+		//Debug.DrawLine(wallRay.origin, wallRay.origin + wallRay.direction * 0.45f);
+	
+		Vector3 vel = rigidbody2D.velocity;			
+
+		if(wallHit.collider) 		
+			vel.x = 0;
+		else
+			vel.x = Time.deltaTime * inputX * speed;		
+
+		rigidbody2D.velocity = vel;
+
+		//Facing
+		if(vel.x != 0)
+			facing = Mathf.Sign(inputX);
 	}
 
 	void AttemptPickup()
@@ -187,16 +237,18 @@ public class Player : MonoBehaviour
 		for(int i = 0, count = col.contacts.Length; i < count; i++)
 		{
 			ContactPoint2D c = col.contacts[i];
-			
+
+			//Ground
 			float dot = Vector3.Dot(c.normal, Vector3.up); 
 			
 			if(dot > 0.6f)
 				grounded = true;
-			
-			//float dotWall = Vector3.Dot(c.normal, Vector3.right); 
-			
-			//if(Mathf.Abs(dotWall) > 0.5f)
-			//	wallCollision = Mathf.Sign(dotWall);
+
+			//Walls
+			/*float dotWall = Vector3.Dot(c.normal, Vector3.right); 
+
+			if(Mathf.Abs(dotWall) > 0.5f)
+				wallCollision = Mathf.Sign(dotWall);*/
 		}
 	}
 	
@@ -207,10 +259,10 @@ public class Player : MonoBehaviour
 		{
 			ContactPoint2D c = col.contacts[i];
 			
-			float dotWall = Vector3.Dot(c.normal, Vector3.right); 
+			/*float dotWall = Vector3.Dot(c.normal, Vector3.right); 
 			
 			if(Mathf.Abs(dotWall) > 0.5f)
-				wallCollision = 0;
+				wallCollision = 0;*/
 		}
 	}
 
