@@ -62,6 +62,12 @@ ModelImporter:
     100112: Rig_ShoulderR
     100114: Rig_Spine
     100116: Rig_Wires
+    100118: Arms
+    100120: Body
+    100122: Cord
+    100124: Face
+    100126: Hat
+    100128: Head
     400000: Mesh
     400002: //RootNode
     400004: PlayerMesh
@@ -121,13 +127,31 @@ ModelImporter:
     400112: Rig_ShoulderR
     400114: Rig_Spine
     400116: Rig_Wires
+    400118: Arms
+    400120: Body
+    400122: Cord
+    400124: Face
+    400126: Hat
+    400128: Head
     4300000: PlayerMesh
     4300002: Mesh_Player
+    4300004: Head
+    4300006: Cord
+    4300008: Hat
+    4300010: Arms
+    4300012: Body
+    4300014: Face
     7400000: Take 001
     9500000: //RootNode
     11100000: //RootNode
     13700000: PlayerMesh
     13700002: Mesh_Player
+    13700004: Arms
+    13700006: Body
+    13700008: Cord
+    13700010: Face
+    13700012: Hat
+    13700014: Head
   materials:
     importMaterials: 0
     materialName: 0
