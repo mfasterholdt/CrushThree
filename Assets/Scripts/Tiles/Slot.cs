@@ -29,7 +29,7 @@ public class Slot : Tile
 		}
 	}
 
-	void FixedUpdate()
+	public override void FixedUpdate()
 	{
 		if(currentTile == null)
 			return;

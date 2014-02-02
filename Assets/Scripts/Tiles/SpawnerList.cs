@@ -19,7 +19,7 @@ public class SpawnerList : MonoBehaviour
 		{
 			Slot slot = slots[i];
 
-			if(slot.currentTile)
+			if(slot && slot.currentTile)
 				tiles.Add(slot.currentTile);
 		}
 

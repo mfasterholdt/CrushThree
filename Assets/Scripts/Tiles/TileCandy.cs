@@ -41,8 +41,8 @@ public class TileCandy : Tile
 		if(rigidbody2D)
 			rigidbody2D.isKinematic = true;
 
-		if(collider2D)
-			collider2D.enabled = false;
+		/*if(collider2D)
+			collider2D.enabled = false;*/
 
 		state.SetState(BoardState, BoardStateVisual);
 	}
@@ -91,6 +91,8 @@ public class TileCandy : Tile
 	{
 		rigidbody2D.velocity = Vector2.zero;
 		rigidbody2D.isKinematic = false;
+		rigidbody2D.collider2D.enabled = true;
+		rigidbody2D.collider2D.isTrigger = false;
 
 		state.SetState(IdleState, null);
 	}
@@ -247,5 +249,15 @@ public class TileCandy : Tile
 		glitchTimer = Random.Range(1f, 3f);	
 
 		Level.Instance.glitches.Add(this);
+	}
+
+	public void BecomeNormal()
+	{
+		glitch = false;
+
+		visuals.renderer.material = initialMaterial;
+		glitchTimer = 0;
+
+		Level.Instance.glitches.Remove(this);
 	}
 }

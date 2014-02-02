@@ -11,6 +11,9 @@ public class Level : SingletonComponent<Level>
 	public GameObject selectionPrefab;
 	public GameObject selectionTarget;
 
+	public Transform trashTarget;
+	private TileCandy trashTile;
+
 	public Tile borderTile;
 	public static Tile BorderTile;
 
@@ -103,13 +106,9 @@ public class Level : SingletonComponent<Level>
 			TileCandy newGlitch = startBoard.Find(x => !glitches.Contains(x) && (int)x.type == i);
 
 			if(newGlitch)
-			{
 				newGlitch.BecomeGlitch();
-			}
 			else
-			{
 				break;
-			}
 		}
 
 	}
@@ -232,6 +231,17 @@ public class Level : SingletonComponent<Level>
 			}
 
 			allMatches.Add(tile);
+
+			//Add latest match to trash
+			if(trashTile)
+				Destroy(trashTile.gameObject);
+
+			GameObject newTrashObj = Instantiate(tile.gameObject, trashTarget.position, Quaternion.identity) as GameObject;
+			TileCandy newTrashTile = newTrashObj.GetComponent<TileCandy>();
+			newTrashTile.SetIdleState();
+
+			trashTile = newTrashTile;
+
 			//Debug.Log ("Points : "+ points);
 		}
 
@@ -263,9 +273,12 @@ public class Level : SingletonComponent<Level>
 	{
 		if(player) return;
 
-		Vector3 spawnPos = p.ToVector3();
+		Vector3 spawnPos = board.transform.position + Vector3.right * 11; //p.ToVector3();
 
 		GameObject newPlayer = Instantiate(playerPrefab, spawnPos, Quaternion.Euler(0, 0, 0)) as GameObject; 
+
+		glitchCount = 0;
+		glitches.ForEach(x => x.BecomeNormal());
 
 		player = newPlayer.GetComponent<Player>();
 	}
@@ -411,6 +424,10 @@ public class Level : SingletonComponent<Level>
 
 		if(tileCandy)
 			tileCandy.SetBoardState();
+	
+		//Create glitch if missing
+		if(glitches.Count < glitchCount && !glitches.Exists(g => g.type == tileCandy.type))
+			tileCandy.BecomeGlitch();
 
 		return true;
 	}

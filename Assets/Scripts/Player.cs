@@ -257,9 +257,9 @@ public class Player : MonoBehaviour
 
 		for(int i = 0, count = col.contacts.Length; i < count; i++)
 		{
-			ContactPoint2D c = col.contacts[i];
+			/*ContactPoint2D c = col.contacts[i];
 			
-			/*float dotWall = Vector3.Dot(c.normal, Vector3.right); 
+			float dotWall = Vector3.Dot(c.normal, Vector3.right); 
 			
 			if(Mathf.Abs(dotWall) > 0.5f)
 				wallCollision = 0;*/
