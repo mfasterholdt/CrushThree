@@ -68,6 +68,8 @@ ModelImporter:
     100124: Face
     100126: Hat
     100128: Head
+    100130: ArmL
+    100132: ArmR
     400000: Mesh
     400002: //RootNode
     400004: PlayerMesh
@@ -133,6 +135,8 @@ ModelImporter:
     400124: Face
     400126: Hat
     400128: Head
+    400130: ArmL
+    400132: ArmR
     4300000: PlayerMesh
     4300002: Mesh_Player
     4300004: Head
@@ -141,6 +145,8 @@ ModelImporter:
     4300010: Arms
     4300012: Body
     4300014: Face
+    4300016: ArmL
+    4300018: ArmR
     7400000: Take 001
     9500000: //RootNode
     11100000: //RootNode
@@ -152,6 +158,8 @@ ModelImporter:
     13700010: Face
     13700012: Hat
     13700014: Head
+    13700016: ArmL
+    13700018: ArmR
   materials:
     importMaterials: 0
     materialName: 0
