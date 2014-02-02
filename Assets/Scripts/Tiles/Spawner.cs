@@ -7,6 +7,7 @@ public class Spawner : WorldObject
 	public SpawnItem[] items;
 	public SpawnerList spawnerList;
 	public WorldObject connectedTo;
+	public Slot powerSource;
 
 	private TileCandy target;
 
@@ -41,6 +42,9 @@ public class Spawner : WorldObject
 
 	void Spawn()
 	{
+		if(powerSource && (!powerSource.currentTile ||  powerSource.currentTile.type != TileCandy.CandyType.Electro))
+			return;
+
 		if(connectedTo)
 		{
 			//Connected
