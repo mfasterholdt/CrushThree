@@ -63,13 +63,13 @@ public class Player : MonoBehaviour
 		BasicMovement(moveSpeed);
 
 		//Climbing
-		/*float inputY = Input.GetAxis("Vertical");
+		float inputY = Input.GetAxis("Vertical");
 		
-		if(triggers.Count > 0)
-		{
-			if(Mathf.Abs(inputY) > 0.3f)
-				nextPos.y += inputY * climbSpeed * Time.deltaTime;
-		}*/
+		if(triggers.Count > 0 && Mathf.Abs(inputY) > 0.2f)
+			SetLadderState();
+
+		//Gravity
+		rigidbody2D.AddForce(Vector2.up * gravity);
 	}
 
 	void MoveStateVisual()
@@ -80,15 +80,11 @@ public class Player : MonoBehaviour
 		
 		//Pickup
 		if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-		{
 			AttemptPickup();
-		}
 		
 		//Drop
 		if(Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-		{
 			AttemptDrop();
-		}
 	}
 
 	//Jump
@@ -107,17 +103,17 @@ public class Player : MonoBehaviour
 		BasicMovement(moveSpeed * airControl);
 
 		//Climbing
-		/*float inputY = Input.GetAxis("Vertical");
+		float inputY = Input.GetAxis("Vertical");
 		
-		if(triggers.Count > 0)
-		{
-			if(Mathf.Abs(inputY) > 0.3f)
-				nextPos.y += inputY * climbSpeed * Time.deltaTime;
-		}*/
+		if(triggers.Count > 0 && Mathf.Abs(inputY) > 0.2f)
+			SetLadderState();
 	
 		//Land
 		if(grounded)
 			SetMoveState();
+
+		//Gravity
+		rigidbody2D.AddForce(Vector2.up * gravity);
 	}
 
 	void JumpStateVisual()
@@ -135,15 +131,33 @@ public class Player : MonoBehaviour
 		}
 	}
 
+	//Ladder State
+	void SetLadderState()
+	{
+		anim.CrossFade(animIdle.name, 0.2f);
+		state.SetState(LadderState, null);
+	}
+
+	void LadderState()
+	{
+		BasicMovement(moveSpeed);	
+
+		float inputY = Input.GetAxis("Vertical");
+		Vector3 vel = rigidbody2D.velocity;
+
+		vel.y = Time.deltaTime * inputY * climbSpeed;				
+		rigidbody2D.velocity = vel;
+
+		//Leave ladder
+		if(triggers.Count == 0)
+			SetMoveState();
+	}
+
 	//General Updates
 	void FixedUpdate()
 	{		
 		if(state.FixedUpdate != null)
 			state.FixedUpdate();
-
-		//Gravity
-		rigidbody2D.AddForce(Vector2.up * gravity);
-
 	}
 
 	void Update()

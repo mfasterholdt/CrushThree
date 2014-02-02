@@ -49,6 +49,7 @@ public class Level : SingletonComponent<Level>
 	void Start () 
 	{
 		Camera.main.transparencySortMode = TransparencySortMode.Orthographic;
+		player = FindObjectOfType<Player>();
 
 		if(selectionPrefab)
 		{
