@@ -29,6 +29,17 @@ public class Slot : Tile
 		}
 	}
 
+	public bool PlaceTile(TileCandy tile)
+	{
+		if(currentTile) 
+			return false;
+
+		currentTile = tile;
+		tile.SetSlotState(pos);
+
+		return true;
+	}
+
 	public override void FixedUpdate()
 	{
 		if(currentTile == null)

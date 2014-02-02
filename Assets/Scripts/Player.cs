@@ -22,10 +22,9 @@ public class Player : MonoBehaviour
 	private float cameraEaseIn;
 	private float wallCollision;
 	
-	List<Trigger> triggers = new List<Trigger>();
+	List<Trigger> ladderTriggers = new List<Trigger>();
 
 	public LayerMask environmentMask;
-	//****Create STATES to handle all the stuffs!!!
 
 	public Animation anim;
 	public AnimationClip animIdle;
@@ -65,7 +64,7 @@ public class Player : MonoBehaviour
 		//Climbing
 		float inputY = Input.GetAxis("Vertical");
 		
-		if(triggers.Count > 0 && Mathf.Abs(inputY) > 0.2f)
+		if(ladderTriggers.Count > 0 && Mathf.Abs(inputY) > 0.2f)
 			SetLadderState();
 
 		//Gravity
@@ -105,7 +104,7 @@ public class Player : MonoBehaviour
 		//Climbing
 		float inputY = Input.GetAxis("Vertical");
 		
-		if(triggers.Count > 0 && Mathf.Abs(inputY) > 0.2f)
+		if(ladderTriggers.Count > 0 && Mathf.Abs(inputY) > 0.2f)
 			SetLadderState();
 	
 		//Land
@@ -149,7 +148,7 @@ public class Player : MonoBehaviour
 		rigidbody2D.velocity = vel;
 
 		//Leave ladder
-		if(triggers.Count == 0)
+		if(ladderTriggers.Count == 0)
 			SetMoveState();
 	}
 
@@ -284,16 +283,16 @@ public class Player : MonoBehaviour
 	{
 		Trigger t = col.GetComponent<Trigger>();
 
-		if(t && !triggers.Contains(t))
-			triggers.Add(t);
+		if(t && t.type == Trigger.Type.Ladder && !ladderTriggers.Contains(t))
+			ladderTriggers.Add(t);
 	}
 
 	void OnTriggerExit2D(Collider2D col)
 	{
 		Trigger t = col.GetComponent<Trigger>();
 		
-		if(t && triggers.Contains(t))
-			triggers.Remove(t);
+		if(t && t.type == Trigger.Type.Ladder && ladderTriggers.Contains(t))
+			ladderTriggers.Remove(t);
 	}
 
 }

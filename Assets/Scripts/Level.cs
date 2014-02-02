@@ -10,9 +10,8 @@ public class Level : SingletonComponent<Level>
 	public Selection selection;
 	public GameObject selectionPrefab;
 	public GameObject selectionTarget;
-
-	public Transform trashTarget;
-	private TileCandy trashTile;
+	
+	public Slot trashSlot;
 
 	public Tile borderTile;
 	public static Tile BorderTile;
@@ -234,14 +233,19 @@ public class Level : SingletonComponent<Level>
 			allMatches.Add(tile);
 
 			//Add latest match to trash
-			if(trashTile)
-				Destroy(trashTile.gameObject);
+			if(trashSlot)
+			{
+				if(trashSlot.currentTile)
+				{
+					Destroy(trashSlot.currentTile.gameObject);
+					trashSlot.currentTile = null;
+				}
 
-			GameObject newTrashObj = Instantiate(tile.gameObject, trashTarget.position, Quaternion.identity) as GameObject;
-			TileCandy newTrashTile = newTrashObj.GetComponent<TileCandy>();
-			newTrashTile.SetIdleState();
+				GameObject newTrashObj = Instantiate(tile.gameObject, trashSlot.pos.ToVector3(), Quaternion.identity) as GameObject;
+				TileCandy newTrashTile = newTrashObj.GetComponent<TileCandy>();
 
-			trashTile = newTrashTile;
+				trashSlot.PlaceTile(newTrashTile);
+			}
 
 			//Debug.Log ("Points : "+ points);
 		}
