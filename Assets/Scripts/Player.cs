@@ -31,6 +31,8 @@ public class Player : MonoBehaviour
 	public AnimationClip animJump;
 	public AnimationClip animRun;
 
+	public bool startInBoard = false;
+
 	public State state = new State();
 
 	[HideInInspector]
@@ -45,7 +47,10 @@ public class Player : MonoBehaviour
 
 		Camera.main.transparencySortMode = TransparencySortMode.Orthographic;
 
-		SetBoardState();
+		if(startInBoard)
+			SetBoardState();
+		else 
+			SetMoveState();
 	}
 
 	//--//State
@@ -88,12 +93,18 @@ public class Player : MonoBehaviour
 		float inputX = Input.GetAxis("Horizontal");
 
 		if(inputX == 0)
-			anim.CrossFade(animIdle.name, 0.2f);
+			PlayAnimation(animIdle);
 		else
-			anim.CrossFade(animRun.name, 0.2f);
+			PlayAnimation(animRun);
 
 		//Gravity
 		rigidbody2D.AddForce(Vector2.up * gravity);
+	}
+
+	private void PlayAnimation(AnimationClip clip, float blendTime = 0.2f)
+	{
+		if(anim && clip)
+			anim.CrossFade(clip.name, blendTime);
 	}
 
 	void MoveStateVisual()
@@ -117,7 +128,8 @@ public class Player : MonoBehaviour
 		rigidbody2D.AddForce(Vector2.up * jumpForce);
 		grounded = false;
 
-		anim.CrossFadeQueued(animJump.name, 0.2f, QueueMode.PlayNow);
+		if(anim && animJump)
+			anim.CrossFadeQueued(animJump.name, 0.2f, QueueMode.PlayNow);
 
 		state.SetState(JumpState, JumpStateVisual);
 	}
@@ -158,7 +170,7 @@ public class Player : MonoBehaviour
 	//Ladder State
 	void SetLadderState()
 	{
-		anim.CrossFade(animIdle.name, 0.2f);
+		PlayAnimation(animIdle);
 		state.SetState(LadderState, null);
 	}
 
@@ -200,17 +212,18 @@ public class Player : MonoBehaviour
 
 		//Camera Follow
 		Vector3 camTarget = Vector3.zero;
-
-		if(state.FixedUpdate == BoardState)
+		
+		
+		if(state.FixedUpdate == BoardState && Level.Instance != null)
 			camTarget =  Level.Instance.board.transform.position + Vector3.right * 4.5f + Vector3.up * 2.5f - transform.forward * cameraOffset.z;
 		else
 			camTarget = transform.position - transform.forward * cameraOffset.z + transform.up * cameraOffset.y;
-
+		
 		Vector3 camPos = cam.transform.position;
-		camPos += (camTarget - camPos) * Time.deltaTime * 2f;
-		cam.transform.position = camPos;
+		camPos += (camTarget - camPos) * Time.deltaTime * 3f;
+		cam.transform.position = camPos;	
 	}
-
+	
 	//--//Helper functions
 
 	void BasicMovement(float speed)
@@ -289,26 +302,13 @@ public class Player : MonoBehaviour
 			
 			if(dot > 0.6f)
 				grounded = true;
-
-			//Walls
-			/*float dotWall = Vector3.Dot(c.normal, Vector3.right); 
-
-			if(Mathf.Abs(dotWall) > 0.5f)
-				wallCollision = Mathf.Sign(dotWall);*/
 		}
 	}
 	
 	void OnCollisionExit2D(Collision2D col)
 	{
-
 		for(int i = 0, count = col.contacts.Length; i < count; i++)
 		{
-			/*ContactPoint2D c = col.contacts[i];
-			
-			float dotWall = Vector3.Dot(c.normal, Vector3.right); 
-			
-			if(Mathf.Abs(dotWall) > 0.5f)
-				wallCollision = 0;*/
 		}
 	}
 
