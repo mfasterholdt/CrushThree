@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 
-public class Player : MonoBehaviour
+public class Player : SingletonComponent<Player>
 {	
 	public Transform visuals;
+	public Room currentRoom;
 
 	public float moveSpeed = 275f;
 	public float airControl = 0.7f;
@@ -21,7 +23,8 @@ public class Player : MonoBehaviour
 	private bool camFollow;
 	private float cameraEaseIn;
 	private float wallCollision;
-	
+	private Entrance currentEntrance;
+
 	List<Trigger> ladderTriggers = new List<Trigger>();
 
 	public LayerMask environmentMask;
@@ -43,6 +46,11 @@ public class Player : MonoBehaviour
 
 	void Start()
 	{
+		currentRoom = FindObjectsOfType<Room>().ToList().Find(x => x.gameObject.activeSelf);
+
+		if(!currentRoom) 
+			Debug.LogWarning("No active room found");
+
 		cam = Camera.main;
 
 		Camera.main.transparencySortMode = TransparencySortMode.Orthographic;
@@ -101,21 +109,22 @@ public class Player : MonoBehaviour
 		rigidbody2D.AddForce(Vector2.up * gravity);
 	}
 
-	private void PlayAnimation(AnimationClip clip, float blendTime = 0.2f)
-	{
-		if(anim && clip)
-			anim.CrossFade(clip.name, blendTime);
-	}
-
 	void MoveStateVisual()
 	{
 		//Jump
 		if(grounded && Input.GetKey(KeyCode.Space))
 			SetJumpState();
 		
-		//Pickup
+
 		if(Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
+		{
+			//Pickup
 			AttemptPickup();
+
+			//Enter Room
+			if(currentEntrance)
+				EnterRoom(currentEntrance);
+		}
 		
 		//Drop
 		if(Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
@@ -225,6 +234,11 @@ public class Player : MonoBehaviour
 	}
 	
 	//--//Helper functions
+	private void PlayAnimation(AnimationClip clip, float blendTime = 0.2f)
+	{
+		if(anim && clip)
+			anim.CrossFade(clip.name, blendTime);
+	}
 
 	void BasicMovement(float speed)
 	{
@@ -270,6 +284,7 @@ public class Player : MonoBehaviour
 
 		//Pickup Object
 		carrying = tile;
+		tile.transform.parent = transform;
 
 		tile.SetCarryState();
 	}
@@ -285,10 +300,19 @@ public class Player : MonoBehaviour
 		Vector3 dropPos = transform.position + visuals.right * facing;
 
 		carrying.transform.position = dropPos;
-
+		carrying.transform.parent = currentRoom.transform;
 		carrying.SetIdleState();
 
 		carrying = null;
+	}
+	
+	public void EnterRoom (Entrance entrance) 
+	{
+		currentRoom.gameObject.SetActive(false);
+		
+		entrance.room.gameObject.SetActive(true);
+		
+		currentRoom = entrance.room;
 	}
 
 	void OnCollisionEnter2D(Collision2D col)
@@ -312,12 +336,18 @@ public class Player : MonoBehaviour
 		}
 	}
 
+
 	void OnTriggerEnter2D(Collider2D col)
 	{
 		Trigger t = col.GetComponent<Trigger>();
 
 		if(t && t.type == Trigger.Type.Ladder && !ladderTriggers.Contains(t))
 			ladderTriggers.Add(t);
+
+		Entrance entrance = col.GetComponent<Entrance>();
+
+		if(entrance) 
+			currentEntrance = entrance;
 	}
 
 	void OnTriggerExit2D(Collider2D col)
@@ -325,11 +355,15 @@ public class Player : MonoBehaviour
 		Trigger t = col.GetComponent<Trigger>();
 
 		//Not a trigger
-		if(!t) return;
+		if(t)
+		{
+			if(t.type == Trigger.Type.Ladder && ladderTriggers.Contains(t))
+				ladderTriggers.Remove(t);
+			else if(t.type == Trigger.Type.MindHat)
+				SetBoardState();
+		}
 
-		if(t.type == Trigger.Type.Ladder && ladderTriggers.Contains(t))
-			ladderTriggers.Remove(t);
-		else if(t.type == Trigger.Type.MindHat)
-			SetBoardState();
+		if(currentEntrance && col.GetComponent<Entrance>())
+			currentEntrance = null;
 	}
 }

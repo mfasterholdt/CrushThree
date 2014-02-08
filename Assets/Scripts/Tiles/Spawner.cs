@@ -104,7 +104,7 @@ public class Spawner : WorldObject
 
 		//Spawn Item
 		GameObject newObj = Instantiate(nextItem.gameObject, pos, Quaternion.identity) as GameObject;
-
+		newObj.transform.parent = transform.parent;
 		return newObj.GetComponent<TileCandy>();
 	}
 

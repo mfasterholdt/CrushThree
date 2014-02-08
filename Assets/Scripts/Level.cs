@@ -242,8 +242,9 @@ public class Level : SingletonComponent<Level>
 				}
 
 				GameObject newTrashObj = Instantiate(tile.gameObject, trashSlot.pos.ToVector3(), Quaternion.identity) as GameObject;
-				TileCandy newTrashTile = newTrashObj.GetComponent<TileCandy>();
+				newTrashObj.transform.parent = transform.parent;
 
+				TileCandy newTrashTile = newTrashObj.GetComponent<TileCandy>();
 				trashSlot.PlaceTile(newTrashTile);
 			}
 
