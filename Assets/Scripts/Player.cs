@@ -29,6 +29,7 @@ public class Player : MonoBehaviour
 	public Animation anim;
 	public AnimationClip animIdle;
 	public AnimationClip animJump;
+	public AnimationClip animRun;
 
 	public State state = new State();
 
@@ -44,15 +45,32 @@ public class Player : MonoBehaviour
 
 		Camera.main.transparencySortMode = TransparencySortMode.Orthographic;
 
-		SetMoveState();
+		SetBoardState();
 	}
 
 	//--//State
+	void SetBoardState()
+	{
+		visuals.gameObject.SetActive(false);
+		rigidbody2D.isKinematic = true;
+		state.SetState(BoardState, null);
+	}
+
+	void BoardState()
+	{
+		if(Input.GetKey(KeyCode.Space))
+		{
+			grounded = false;
+			SetMoveState();
+		}
+	}
 
 	//Move
-	void SetMoveState()
+	public void SetMoveState()
 	{
-		anim.CrossFade(animIdle.name, 0.2f);
+		visuals.gameObject.SetActive(true);
+		rigidbody2D.isKinematic = false;
+
 		state.SetState(MoveState, MoveStateVisual);
 	}
 
@@ -66,6 +84,13 @@ public class Player : MonoBehaviour
 		
 		if(ladderTriggers.Count > 0 && Mathf.Abs(inputY) > 0.2f)
 			SetLadderState();
+
+		float inputX = Input.GetAxis("Horizontal");
+
+		if(inputX == 0)
+			anim.CrossFade(animIdle.name, 0.2f);
+		else
+			anim.CrossFade(animRun.name, 0.2f);
 
 		//Gravity
 		rigidbody2D.AddForce(Vector2.up * gravity);
@@ -174,8 +199,16 @@ public class Player : MonoBehaviour
 			carrying.transform.position = transform.position + transform.up * 1.4f;
 
 		//Camera Follow
-		Vector3 camTarget = transform.position - transform.forward * cameraOffset.z + transform.up * cameraOffset.y;
-		cam.transform.position = camTarget;
+		Vector3 camTarget = Vector3.zero;
+
+		if(state.FixedUpdate == BoardState)
+			camTarget =  Level.Instance.board.transform.position + Vector3.right * 4.5f + Vector3.up * 2.5f - transform.forward * cameraOffset.z;
+		else
+			camTarget = transform.position - transform.forward * cameraOffset.z + transform.up * cameraOffset.y;
+
+		Vector3 camPos = cam.transform.position;
+		camPos += (camTarget - camPos) * Time.deltaTime * 2f;
+		cam.transform.position = camPos;
 	}
 
 	//--//Helper functions
@@ -290,9 +323,13 @@ public class Player : MonoBehaviour
 	void OnTriggerExit2D(Collider2D col)
 	{
 		Trigger t = col.GetComponent<Trigger>();
-		
-		if(t && t.type == Trigger.Type.Ladder && ladderTriggers.Contains(t))
-			ladderTriggers.Remove(t);
-	}
 
+		//Not a trigger
+		if(!t) return;
+
+		if(t.type == Trigger.Type.Ladder && ladderTriggers.Contains(t))
+			ladderTriggers.Remove(t);
+		else if(t.type == Trigger.Type.MindHat)
+			SetBoardState();
+	}
 }

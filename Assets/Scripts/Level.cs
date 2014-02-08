@@ -275,17 +275,20 @@ public class Level : SingletonComponent<Level>
 	}
 
 	void SpawnPlayer(Vector2int p)
-	{
-		if(player) return;
+	{ 
+		player.SetMoveState();
+
+		glitchCount = 0;
+		glitches.ForEach(x => x.BecomeNormal());
+
+		/*if(player) return;
 
 		Vector3 spawnPos = board.transform.position + Vector3.right * 11; //p.ToVector3();
 
 		GameObject newPlayer = Instantiate(playerPrefab, spawnPos, Quaternion.Euler(0, 0, 0)) as GameObject; 
 
-		glitchCount = 0;
-		glitches.ForEach(x => x.BecomeNormal());
 
-		player = newPlayer.GetComponent<Player>();
+		player = newPlayer.GetComponent<Player>();*/
 	}
 
 	void FixedUpdate()
