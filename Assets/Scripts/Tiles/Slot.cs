@@ -7,7 +7,11 @@ public class Slot : Tile
 	public CollisionEvents entryTrigger;
 
 	public TileCandy currentTile;
-	
+
+	public Animation anim;
+	public AnimationClip animClose;
+	public AnimationClip animOpen;
+
 	public override void Start () 
 	{
 		base.Start();
@@ -23,10 +27,7 @@ public class Slot : Tile
 		TileCandy tile = col.GetComponent<TileCandy>();
 
 		if(tile) 
-		{
-			currentTile = tile;
-			tile.SetSlotState(pos);
-		}
+			PlaceTile(tile);
 	}
 
 	public bool PlaceTile(TileCandy tile)
@@ -34,10 +35,17 @@ public class Slot : Tile
 		if(currentTile) 
 			return false;
 
+		PlayAnimation(animClose);
 		currentTile = tile;
 		tile.SetSlotState(pos);
 
 		return true;
+	}
+
+	public void RemoveTile()
+	{
+		PlayAnimation(animOpen);
+		currentTile = null;
 	}
 
 	public override void FixedUpdate()
@@ -46,6 +54,12 @@ public class Slot : Tile
 			return;
 
 		if(!currentTile.rigidbody2D.isKinematic)
-			currentTile = null;
+			RemoveTile();
+	}
+
+	private void PlayAnimation(AnimationClip clip, float blendSpeed = 0.2f)
+	{
+		if(anim && clip)
+			anim.CrossFade(clip.name, blendSpeed);
 	}
 }
