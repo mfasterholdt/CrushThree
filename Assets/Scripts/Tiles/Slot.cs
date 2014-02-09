@@ -48,6 +48,14 @@ public class Slot : Tile
 		currentTile = null;
 	}
 
+	public bool IsElectric()
+	{
+		if(currentTile && currentTile.type == TileCandy.CandyType.Electro)
+			return true;
+		else
+			return false;
+	}
+
 	public override void FixedUpdate()
 	{
 		if(currentTile == null)

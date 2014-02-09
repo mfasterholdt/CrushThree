@@ -444,7 +444,7 @@ public class Level : SingletonComponent<Level>
 	public bool PlaceTile(Vector2int pos, Tile tile){ return PlaceTile(pos.x, pos.y, tile); }
 
 	//Remove Tile
-	public void RemoveTile(Tile tile)
+	public void RemoveTile(Tile tile, bool destroy = true)
 	{
 		world[tile.pos.x, tile.pos.y] = null;
 
@@ -455,6 +455,7 @@ public class Level : SingletonComponent<Level>
 
 		tiles.Remove(tile);
 
-		tile.Remove();
+		if(destroy)
+			tile.Remove();
 	}
 }

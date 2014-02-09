@@ -7,11 +7,13 @@ public class Selection : WorldObject
 	public delegate void SelectionEventDelegate (Selection sender, Vector3 pos);
 	public event SelectionEventDelegate OnMouseClick;
 	public event SelectionEventDelegate OnMouseRelease;
-	
+	public LayerMask layerMask;
+
 	public Vector3 mousePosition;
 
-	bool valid;
+	private bool valid;
 
+	[HideInInspector]
 	public bool dragging;
 
 	void Start()
@@ -45,7 +47,7 @@ public class Selection : WorldObject
 		Ray ray = Camera.main.ScreenPointToRay (Input.mousePosition);
 		RaycastHit hit;
 		
-		if(Physics.Raycast(ray, out hit, Camera.main.farClipPlane))
+		if(Physics.Raycast(ray, out hit, Camera.main.farClipPlane, layerMask))
 		{
 			Vector3 p = hit.point;
 			int x = Mathf.RoundToInt(p.x);

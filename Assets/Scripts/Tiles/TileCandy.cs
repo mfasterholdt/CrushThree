@@ -107,6 +107,9 @@ public class TileCandy : Tile
 	//--//Carry
 	public void SetCarryState()
 	{
+		if(state.FixedUpdate == BoardState)
+			Level.Instance.RemoveTile(this, false);
+
 		rigidbody2D.isKinematic = false;
 
 		state.SetState(CarryState, null);

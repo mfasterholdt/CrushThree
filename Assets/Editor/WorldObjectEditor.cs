@@ -28,9 +28,7 @@ public class WorldObjectEditor : Editor
 		t.localPosition = pos;
 		
 		//Snap parent
-		if(t.parent != null)
-		{
-			SnapObject(t.parent);
-		}
+		//if(t.parent != null)
+		//	SnapObject(t.parent);
 	}
 }

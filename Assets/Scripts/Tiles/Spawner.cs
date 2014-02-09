@@ -42,7 +42,7 @@ public class Spawner : WorldObject
 
 	void Spawn()
 	{
-		if(powerSource && (!powerSource.currentTile ||  powerSource.currentTile.type != TileCandy.CandyType.Electro))
+		if(powerSource && !powerSource.IsElectric())
 			return;
 
 		if(connectedTo)
