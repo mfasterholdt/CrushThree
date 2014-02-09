@@ -301,7 +301,12 @@ public class Player : SingletonComponent<Player>
 		Vector3 dropPos = transform.position + visuals.right * facing;
 
 		carrying.transform.position = dropPos;
-		carrying.transform.parent = currentRoom.transform;
+
+		if(currentRoom)
+			carrying.transform.parent = currentRoom.transform;
+		else 
+			carrying.transform.parent = transform.parent;
+
 		carrying.SetIdleState();
 
 		carrying = null;
