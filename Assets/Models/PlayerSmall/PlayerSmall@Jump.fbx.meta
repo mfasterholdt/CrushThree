@@ -1,0 +1,236 @@
+fileFormatVersion: 2
+guid: 5b46b686d04789f4e924cd7c8f7e9591
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: ArmL
+    100002: ArmR
+    100004: Body
+    100006: Bones
+    100008: Face
+    100010: Head
+    100012: LegL
+    100014: LegR
+    100016: Mesh
+    100018: //RootNode
+    100020: Rig_CustomA
+    100022: Rig_CustomB
+    100024: Rig_ElbowL
+    100026: Rig_ElbowR
+    100028: Rig_EyeL
+    100030: Rig_EyeR
+    100032: Rig_FootL
+    100034: Rig_FootR
+    100036: Rig_HandL
+    100038: Rig_HandR
+    100040: Rig_HeadTop
+    100042: Rig_HipL
+    100044: Rig_HipR
+    100046: Rig_KneeL
+    100048: Rig_KneeR
+    100050: Rig_Mouth
+    100052: Rig_Neck
+    100054: Rig_Neck_Head
+    100056: Rig_Nose
+    100058: Rig_Pelvis
+    100060: Rig_Root
+    100062: Rig_ShoulderL
+    100064: Rig_ShoulderR
+    100066: Rig_SpineA
+    400000: ArmL
+    400002: ArmR
+    400004: Body
+    400006: Bones
+    400008: Face
+    400010: Head
+    400012: LegL
+    400014: LegR
+    400016: Mesh
+    400018: //RootNode
+    400020: Rig_CustomA
+    400022: Rig_CustomB
+    400024: Rig_ElbowL
+    400026: Rig_ElbowR
+    400028: Rig_EyeL
+    400030: Rig_EyeR
+    400032: Rig_FootL
+    400034: Rig_FootR
+    400036: Rig_HandL
+    400038: Rig_HandR
+    400040: Rig_HeadTop
+    400042: Rig_HipL
+    400044: Rig_HipR
+    400046: Rig_KneeL
+    400048: Rig_KneeR
+    400050: Rig_Mouth
+    400052: Rig_Neck
+    400054: Rig_Neck_Head
+    400056: Rig_Nose
+    400058: Rig_Pelvis
+    400060: Rig_Root
+    400062: Rig_ShoulderL
+    400064: Rig_ShoulderR
+    400066: Rig_SpineA
+    4300000: Head
+    4300002: Body
+    4300004: ArmL
+    4300006: ArmR
+    4300008: LegL
+    4300010: LegR
+    4300012: Face
+    7400000: Jump
+    9500000: //RootNode
+    11100000: //RootNode
+    13700000: ArmL
+    13700002: ArmR
+    13700004: Body
+    13700006: Face
+    13700008: Head
+    13700010: LegL
+    13700012: LegR
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 4
+    extraExposedTransformPaths: []
+    clipAnimations:
+    - serializedVersion: 16
+      name: Jump
+      takeName: Take 001
+      firstFrame: 0
+      lastFrame: 40
+      wrapMode: 8
+      orientationOffsetY: 0
+      level: 0
+      cycleOffset: 0
+      loop: 0
+      loopTime: 0
+      loopBlend: 0
+      loopBlendOrientation: 0
+      loopBlendPositionY: 0
+      loopBlendPositionXZ: 0
+      keepOriginalOrientation: 0
+      keepOriginalPositionY: 1
+      keepOriginalPositionXZ: 0
+      heightFromFeet: 0
+      mirror: 0
+      bodyMask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+      curves: []
+      events: []
+      transformMask:
+      - path: 
+        weight: 1
+      - path: Bones
+        weight: 1
+      - path: Bones/Rig_Root
+        weight: 1
+      - path: Bones/Rig_Root/Rig_CustomA
+        weight: 1
+      - path: Bones/Rig_Root/Rig_CustomB
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_HipL
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_HipL/Rig_KneeL
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_HipL/Rig_KneeL/Rig_FootL
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_HipR
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_HipR/Rig_KneeR
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_HipR/Rig_KneeR/Rig_FootR
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_Neck
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_Neck/Rig_Neck_Head
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_Neck/Rig_Neck_Head/Rig_EyeL
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_Neck/Rig_Neck_Head/Rig_EyeR
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_Neck/Rig_Neck_Head/Rig_HeadTop
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_Neck/Rig_Neck_Head/Rig_Mouth
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_Neck/Rig_Neck_Head/Rig_Nose
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_ShoulderL
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_ShoulderL/Rig_ElbowL
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_ShoulderL/Rig_HandL
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_ShoulderR
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_ShoulderR/Rig_ElbowR
+        weight: 1
+      - path: Bones/Rig_Root/Rig_Pelvis/Rig_SpineA/Rig_ShoulderR/Rig_HandR
+        weight: 1
+      - path: Mesh
+        weight: 1
+      - path: Mesh/ArmL
+        weight: 1
+      - path: Mesh/ArmR
+        weight: 1
+      - path: Mesh/Body
+        weight: 1
+      - path: Mesh/Face
+        weight: 1
+      - path: Mesh/Head
+        weight: 1
+      - path: Mesh/LegL
+        weight: 1
+      - path: Mesh/LegR
+        weight: 1
+      maskType: 0
+      maskSource: {instanceID: 0}
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 1
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 1
+  userData: 
