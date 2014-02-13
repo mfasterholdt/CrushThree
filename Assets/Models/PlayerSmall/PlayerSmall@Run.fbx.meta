@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 424cbe57b5902894b977cd3e678c75ab
+guid: 69ec6952d516b8a4192c6dcde5d2832d
 ModelImporter:
   serializedVersion: 15
   fileIDToRecycleName:
@@ -78,7 +78,7 @@ ModelImporter:
     4300008: LegL
     4300010: LegR
     4300012: Face
-    7400000: TPose
+    7400000: Run
     9500000: //RootNode
     11100000: //RootNode
     13700000: ArmL
@@ -104,10 +104,10 @@ ModelImporter:
     extraExposedTransformPaths: []
     clipAnimations:
     - serializedVersion: 16
-      name: TPose
+      name: Run
       takeName: Take 001
-      firstFrame: 1
-      lastFrame: 48
+      firstFrame: 0
+      lastFrame: 16
       wrapMode: 2
       orientationOffsetY: 0
       level: 0
