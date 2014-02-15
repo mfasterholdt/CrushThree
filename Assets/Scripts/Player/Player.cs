@@ -9,12 +9,16 @@ public class Player : SingletonComponent<Player>
 	public Transform visuals;
 	public Room currentRoom;
 
-	public float moveSpeed = 275f;
-	public float airControl = 0.7f;
-	public float climbSpeed = 5f;
-	public float jumpForce = 50f;
-	public float gravity = -15f;
-	public float height = 1.3f;
+	public float moveSpeed = 100f;
+	public float groundFriction = 0.1f;
+	public float airMoveSpeed = 85f;
+	public float airFriction = 0.1f;
+	public float maxSpeed = 6f;
+
+	public float climbSpeed = 350f;
+	public float jumpForce = 725f;
+	public float gravity = -42f;
+	public float height = 1.2f;
 	public Vector3 cameraOffset;
 	private Camera cam;
 
@@ -99,7 +103,7 @@ public class Player : SingletonComponent<Player>
 	void MoveState()
 	{
 		//Movement
-		BasicMovement(moveSpeed);
+		BasicMovement(moveSpeed, groundFriction);
 
 		//Climbing
 		float inputY = Input.GetAxis("Vertical");
@@ -107,7 +111,7 @@ public class Player : SingletonComponent<Player>
 		if(ladderTriggers.Count > 0 && Mathf.Abs(inputY) > 0.2f)
 			SetLadderState();
 
-		float inputX = Input.GetAxis("Horizontal");
+		float inputX = GetHorizontalInput();
 
 		if(inputX == 0)
 			PlayAnimation(PlayerAnim.Idle);
@@ -144,6 +148,7 @@ public class Player : SingletonComponent<Player>
 	void SetJumpState()
 	{
 		rigidbody2D.AddForce(Vector2.up * jumpForce);
+
 		grounded = false;
 
 		PlayAnimationQueued(PlayerAnim.Jump);
@@ -153,7 +158,7 @@ public class Player : SingletonComponent<Player>
 
 	void JumpState()
 	{
-		BasicMovement(moveSpeed * airControl);
+		BasicMovement(airMoveSpeed, airFriction);
 
 		//Climbing
 		float inputY = Input.GetAxis("Vertical");
@@ -193,7 +198,7 @@ public class Player : SingletonComponent<Player>
 
 	void LadderState()
 	{
-		BasicMovement(moveSpeed);	
+		BasicMovement(moveSpeed, 0);	
 
 		float inputY = Input.GetAxis("Vertical");
 		Vector3 vel = rigidbody2D.velocity;
@@ -230,7 +235,6 @@ public class Player : SingletonComponent<Player>
 		//Camera Follow
 		Vector3 camTarget = Vector3.zero;
 		
-		
 		if(state.FixedUpdate == BoardState && Level.Instance != null)
 			camTarget =  Level.Instance.board.transform.position + Vector3.right * 4.5f + Vector3.up * 2.5f - transform.forward * cameraOffset.z;
 		else
@@ -258,13 +262,19 @@ public class Player : SingletonComponent<Player>
 			anim.CrossFadeQueued(clip.name, blendTime, QueueMode.PlayNow);			
 	}
 
-	void BasicMovement(float speed)
+	private float GetHorizontalInput()
 	{
-		float inputX = Input.GetAxis("Horizontal");
+		if(Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+		   return -1f;
+		else if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+		   return 1f;
 
-		//No input
-		if(inputX == 0)
-			return;
+		return 0;
+	}
+
+	void BasicMovement(float speed, float friction)
+	{
+		float inputX = GetHorizontalInput();
 
 		//Wall Collision
 		Ray2D wallRay = new Ray2D(transform.position + Vector3.up * height * -0.4f, Vector3.right * Mathf.Sign(inputX));
@@ -273,20 +283,49 @@ public class Player : SingletonComponent<Player>
 		//***Push should happen as add force instead of collider push
 		if(debug)
 			Debug.DrawLine(wallRay.origin, wallRay.origin + wallRay.direction * 0.5f, Color.red);
-	
 
 		Vector3 vel = rigidbody2D.velocity;			
 
-		if(wallHit.collider) 		
-			vel.x = 0;
-		else
-			vel.x = Time.deltaTime * inputX * speed;		
+		//Friction
+		if(inputX == 0)
+		{
+			vel.x -= vel.x * friction;
+			rigidbody2D.velocity = vel;
+		}
 
-		rigidbody2D.velocity = vel;
+		bool changeDirection = Mathf.Sign(inputX) != Mathf.Sign(vel.x);
+	
+		if(Mathf.Abs(vel.x) > maxSpeed && (inputX == 0 || !changeDirection))
+		{
+			//Max speed
+			vel.x = Mathf.Sign(vel.x) * maxSpeed;
+			rigidbody2D.velocity = vel;
+		}
+
+		if(wallHit.collider)
+		{
+			//Wall
+			vel.x = 0;
+			rigidbody2D.velocity = vel;
+		}
+		else
+		{
+			//Move
+			rigidbody2D.AddForce(Vector2.right * inputX * speed);
+		}
+
 
 		//Facing
-		if(vel.x != 0)
+		if(inputX != 0)
 			facing = Mathf.Sign(inputX);
+	}
+
+	void GroundFriction()
+	{
+		float inputX = GetHorizontalInput();
+
+		if(inputX == 0)
+			rigidbody2D.velocity -= rigidbody2D.velocity * groundFriction; 
 	}
 
 	void AttemptPickup()
