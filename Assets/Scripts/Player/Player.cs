@@ -14,7 +14,7 @@ public class Player : SingletonComponent<Player>
 	public float climbSpeed = 5f;
 	public float jumpForce = 50f;
 	public float gravity = -15f;
-
+	public float height = 1.3f;
 	public Vector3 cameraOffset;
 	private Camera cam;
 
@@ -30,12 +30,14 @@ public class Player : SingletonComponent<Player>
 
 	public LayerMask environmentMask;
 
-	public Animation anim;
-	public AnimationClip animIdle;
-	public AnimationClip animJump;
-	public AnimationClip animRun;
-
 	public bool startInBoard = false;
+
+	public Animation anim;
+	public AnimationTheme themeDefault;
+	public AnimationTheme themeCarry;
+	private AnimationTheme currentTheme;
+
+	public bool debug;
 
 	public State state = new State();
 
@@ -47,6 +49,8 @@ public class Player : SingletonComponent<Player>
 
 	void Start()
 	{
+		currentTheme = themeDefault;
+
 		currentRoom = FindObjectsOfType<Room>().ToList().Find(x => x.gameObject.activeSelf);
 
 		if(!currentRoom) 
@@ -60,6 +64,9 @@ public class Player : SingletonComponent<Player>
 			SetBoardState();
 		else 
 			SetMoveState();
+
+		//Set camerea on start
+		cam.transform.position = transform.position - transform.forward * cameraOffset.z + transform.up * cameraOffset.y;
 	}
 
 	//--//State
@@ -72,7 +79,8 @@ public class Player : SingletonComponent<Player>
 
 	void BoardState()
 	{
-		if(Input.GetKey(KeyCode.Space))
+		//Debug temp
+		if(debug && Input.GetKey(KeyCode.Space))
 		{
 			grounded = false;
 			SetMoveState();
@@ -102,9 +110,9 @@ public class Player : SingletonComponent<Player>
 		float inputX = Input.GetAxis("Horizontal");
 
 		if(inputX == 0)
-			PlayAnimation(animIdle);
+			PlayAnimation(PlayerAnim.Idle);
 		else
-			PlayAnimation(animRun);
+			PlayAnimation(PlayerAnim.Run);
 
 		//Gravity
 		rigidbody2D.AddForce(Vector2.up * gravity);
@@ -138,8 +146,7 @@ public class Player : SingletonComponent<Player>
 		rigidbody2D.AddForce(Vector2.up * jumpForce);
 		grounded = false;
 
-		if(anim && animJump)
-			anim.CrossFadeQueued(animJump.name, 0.2f, QueueMode.PlayNow);
+		PlayAnimationQueued(PlayerAnim.Jump);
 
 		state.SetState(JumpState, JumpStateVisual);
 	}
@@ -180,7 +187,7 @@ public class Player : SingletonComponent<Player>
 	//Ladder State
 	void SetLadderState()
 	{
-		PlayAnimation(animIdle);
+		PlayAnimation(PlayerAnim.Idle);
 		state.SetState(LadderState, null);
 	}
 
@@ -218,7 +225,7 @@ public class Player : SingletonComponent<Player>
 
 		//Carry
 		if(carrying)
-			carrying.transform.position = transform.position + transform.up * 1.4f;
+			carrying.transform.position = transform.position + transform.up * height * 0.75f;
 
 		//Camera Follow
 		Vector3 camTarget = Vector3.zero;
@@ -231,14 +238,24 @@ public class Player : SingletonComponent<Player>
 		
 		Vector3 camPos = cam.transform.position;
 		camPos += (camTarget - camPos) * Time.deltaTime * 3f;
-		cam.transform.position = camPos;	
+		cam.transform.position = camPos;
 	}
 	
 	//--//Helper functions
-	private void PlayAnimation(AnimationClip clip, float blendTime = 0.2f)
+	private void PlayAnimation(PlayerAnim playerAnim, float blendTime = 0.2f)
 	{
+		AnimationClip clip = currentTheme.getAnim(playerAnim);
+
 		if(anim && clip)
 			anim.CrossFade(clip.name, blendTime);
+	}
+
+	private void PlayAnimationQueued(PlayerAnim playerAnim, float blendTime = 0.2f)
+	{
+		AnimationClip clip = currentTheme.getAnim(playerAnim);
+
+		if(anim && clip)
+			anim.CrossFadeQueued(clip.name, blendTime, QueueMode.PlayNow);			
 	}
 
 	void BasicMovement(float speed)
@@ -250,10 +267,14 @@ public class Player : SingletonComponent<Player>
 			return;
 
 		//Wall Collision
-		Ray2D wallRay = new Ray2D(transform.position + Vector3.up * -0.8f, Vector3.right * Mathf.Sign(inputX));
-		RaycastHit2D wallHit = Physics2D.Raycast(wallRay.origin, wallRay.direction, 0.3f, environmentMask);
-		//Debug.DrawLine(wallRay.origin, wallRay.origin + wallRay.direction * 0.45f);
+		Ray2D wallRay = new Ray2D(transform.position + Vector3.up * height * -0.4f, Vector3.right * Mathf.Sign(inputX));
+		RaycastHit2D wallHit = Physics2D.Raycast(wallRay.origin, wallRay.direction, 0.5f, environmentMask);
+
+		//***Push should happen as add force instead of collider push
+		if(debug)
+			Debug.DrawLine(wallRay.origin, wallRay.origin + wallRay.direction * 0.5f, Color.red);
 	
+
 		Vector3 vel = rigidbody2D.velocity;			
 
 		if(wallHit.collider) 		
@@ -286,6 +307,7 @@ public class Player : SingletonComponent<Player>
 		//Pickup Object
 		carrying = tile;
 		tile.transform.parent = transform;
+		currentTheme = themeCarry;
 
 		tile.SetCarryState();
 	}
@@ -309,6 +331,7 @@ public class Player : SingletonComponent<Player>
 
 		carrying.SetIdleState();
 
+		currentTheme = themeDefault;
 		carrying = null;
 	}
 	

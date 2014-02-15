@@ -75,12 +75,14 @@ public class TileCandy : Tile
 				if(visuals.renderer.material == initialMaterial)
 				{
 					visuals.renderer.material = glitchMaterial;
-					glitchTimer = 1f; //Random.Range(0.1f, 0.3f); 
+					glitchTimer = Random.Range(0.1f, 0.3f); 
+					//glitchTimer = 1f; 
 				}
 				else
 				{
 					visuals.renderer.material = initialMaterial;
-					glitchTimer = 1f; //Random.Range(1f, 3f);
+					glitchTimer = Random.Range(1f, 3f);
+					//glitchTimer = 1f; 
 				}
 			}
 		}
