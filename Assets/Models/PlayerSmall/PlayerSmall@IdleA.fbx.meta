@@ -37,6 +37,7 @@ ModelImporter:
     100062: Rig_ShoulderL
     100064: Rig_ShoulderR
     100066: Rig_SpineA
+    100068: Rough
     400000: ArmL
     400002: ArmR
     400004: Body
@@ -71,6 +72,7 @@ ModelImporter:
     400062: Rig_ShoulderL
     400064: Rig_ShoulderR
     400066: Rig_SpineA
+    400068: Rough
     4300000: Head
     4300002: Body
     4300004: ArmL
@@ -78,6 +80,7 @@ ModelImporter:
     4300008: LegL
     4300010: LegR
     4300012: Face
+    4300014: Rough
     7400000: IdleA
     9500000: //RootNode
     11100000: //RootNode
@@ -88,6 +91,7 @@ ModelImporter:
     13700008: Head
     13700010: LegL
     13700012: LegR
+    13700014: Rough
   materials:
     importMaterials: 0
     materialName: 0
