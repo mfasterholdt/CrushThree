@@ -7,7 +7,7 @@ using System;
 public class Level : SingletonComponent<Level> 
 {
 	[HideInInspector]
-	public Selection selection;
+	public SelectionObj selection;
 	public GameObject selectionPrefab;
 	public GameObject selectionTarget;
 	
@@ -53,7 +53,7 @@ public class Level : SingletonComponent<Level>
 		if(selectionPrefab)
 		{
 			GameObject selectionObj = Instantiate(selectionPrefab) as GameObject;
-			selection = selectionObj.GetComponent<Selection>();
+			selection = selectionObj.GetComponent<SelectionObj>();
 
 			selection.OnMouseClick += OnSelectionClick;
 		}
@@ -113,7 +113,7 @@ public class Level : SingletonComponent<Level>
 
 	}
 	
-	void OnSelectionClick(Selection sender, Vector3 pos)
+	void OnSelectionClick(SelectionObj sender, Vector3 pos)
 	{	
 		//Are we trasitioning?
 		if(matchTransition) return;

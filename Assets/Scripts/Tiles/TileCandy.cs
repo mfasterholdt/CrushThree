@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 public class TileCandy : Tile 
 {
-	public enum CandyType{ Apple, Banana, Grape, Ruby, Emerald, Diamond, BlueBerry, Electro};
+	public enum CandyType{ Apple, Banana, Grape, Ruby, Emerald, Diamond, BlueBerry, Electro, Black};
 
 	//Properti Settings
 	public CandyType type;

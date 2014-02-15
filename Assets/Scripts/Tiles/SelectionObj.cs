@@ -1,10 +1,10 @@
 using UnityEngine;
 using System.Collections;
 
-public class Selection : WorldObject 
+public class SelectionObj : WorldObject 
 {
 	public GameObject visuals;
-	public delegate void SelectionEventDelegate (Selection sender, Vector3 pos);
+	public delegate void SelectionEventDelegate (SelectionObj sender, Vector3 pos);
 	public event SelectionEventDelegate OnMouseClick;
 	public event SelectionEventDelegate OnMouseRelease;
 	public LayerMask layerMask;
