@@ -24,7 +24,6 @@ public class TileCandy : Tile
 	protected float moveSpeedMax = 22f;
 	protected float acceleration = 50f;
 
-
 	public override void Start()
 	{
 		base.Start();
@@ -75,14 +74,12 @@ public class TileCandy : Tile
 				if(visuals.renderer.material == initialMaterial)
 				{
 					visuals.renderer.material = glitchMaterial;
-					glitchTimer = Random.Range(0.1f, 0.3f); 
-					//glitchTimer = 1f; 
+					glitchTimer = Random.Range(1.5f, 2f); 
 				}
 				else
 				{
 					visuals.renderer.material = initialMaterial;
-					glitchTimer = Random.Range(1f, 3f);
-					//glitchTimer = 1f; 
+					glitchTimer = Random.Range(1f, 2.5f);
 				}
 			}
 		}
@@ -251,7 +248,8 @@ public class TileCandy : Tile
 		initialMaterial = visuals.renderer.material;
 		glitchMaterial = Level.Instance.glitchMaterial;
 
-		glitchTimer = Random.Range(1f, 3f);	
+		visuals.renderer.material = glitchMaterial;
+		glitchTimer = 3f;
 
 		Level.Instance.glitches.Add(this);
 	}

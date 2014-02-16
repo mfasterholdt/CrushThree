@@ -38,15 +38,20 @@ public class Level : SingletonComponent<Level>
 	private Player player;
 
 	private Tile pickedTile;
+	private Tile lastPickedTile;
 
 	private bool matchTransition;
 	private float matchTimer;
 	private float matchDelay = 0.15f;
 
 	private bool dragging;
+
+	private float nextGlitchTimer;
 	
 	void Start () 
 	{
+		nextGlitchTimer = 20f; //time before first glitch
+
 		Camera.main.transparencySortMode = TransparencySortMode.Orthographic;
 		player = FindObjectOfType<Player>();
 
@@ -101,7 +106,8 @@ public class Level : SingletonComponent<Level>
 
 		startBoard = startBoard.OrderBy(x => Guid.NewGuid()).ToList();
 
-		for(int i = 0; i < glitchCount; i++)
+		/*initial glitches
+		 * for(int i = 0; i < glitchCount; i++)
 		{
 			TileCandy newGlitch = startBoard.Find(x => !glitches.Contains(x) && (int)x.type == i);
 
@@ -109,8 +115,16 @@ public class Level : SingletonComponent<Level>
 				newGlitch.BecomeGlitch();
 			else
 				break;
-		}
+		}*/
 
+	}
+
+	void CreateGlitch(TileCandy newGlitch)
+	{
+		newGlitch.BecomeGlitch();
+
+		if(glitches.Count < glitchCount)
+			nextGlitchTimer = UnityEngine.Random.Range(10f, 15f);
 	}
 	
 	void OnSelectionClick(SelectionObj sender, Vector3 pos)
@@ -143,6 +157,7 @@ public class Level : SingletonComponent<Level>
 	void Select(Tile tile)
 	{
 		pickedTile = tile;
+		lastPickedTile = pickedTile;
 
 		selectionTarget.SetActive(true);
 
@@ -202,6 +217,8 @@ public class Level : SingletonComponent<Level>
 
 				SpawnPlayer(spawnPos);
 			}
+
+			return;
 		}
 
 		//Regular Connect
@@ -216,6 +233,12 @@ public class Level : SingletonComponent<Level>
 
 		if(horizontalMatches.Count > 1 || verticalMatches.Count > 1)
 		{
+			if(tile == lastPickedTile && nextGlitchTimer <= 0)
+			{
+				CreateGlitch(tile);
+				return;
+			}
+
 			int points = 1;
 
 			if(horizontalMatches.Count > 1)
@@ -247,8 +270,6 @@ public class Level : SingletonComponent<Level>
 				TileCandy newTrashTile = newTrashObj.GetComponent<TileCandy>();
 				trashSlot.PlaceTile(newTrashTile);
 			}
-
-			//Debug.Log ("Points : "+ points);
 		}
 
 	}
@@ -257,7 +278,7 @@ public class Level : SingletonComponent<Level>
 	{
 		TileCandy tile = GetTile(pos.x + dir.x, pos.y + dir.y) as TileCandy;
 
-		if(tile != null && tile.type == type)
+		if(tile != null && tile.type == type && !tile.glitch)
 		{
 			list.Add(tile);
 			Connect(list, type, pos + dir, dir);
@@ -294,6 +315,9 @@ public class Level : SingletonComponent<Level>
 
 	void FixedUpdate()
 	{
+		if(nextGlitchTimer > 0)
+			nextGlitchTimer -= Time.deltaTime;
+
 		CheckDragSwap();
 
 		UpdateMatchTransitions();
@@ -343,7 +367,6 @@ public class Level : SingletonComponent<Level>
 				matchTimer -= Time.deltaTime;
 			}
 		}
-
 	}
 
 	public bool SwapTiles(Tile tile, Tile target)
@@ -435,8 +458,8 @@ public class Level : SingletonComponent<Level>
 			tileCandy.SetBoardState();
 	
 		//Create glitch if missing
-		if(glitches.Count < glitchCount && !glitches.Exists(g => g.type == tileCandy.type))
-			tileCandy.BecomeGlitch();
+		/*if(glitches.Count < glitchCount && !glitches.Exists(g => g.type == tileCandy.type))
+			tileCandy.BecomeGlitch();*/
 
 		return true;
 	}

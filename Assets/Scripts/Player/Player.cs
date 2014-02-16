@@ -355,8 +355,8 @@ public class Player : SingletonComponent<Player>
 	{
 		if(!carrying) return;
 
+		//Wall check
 		RaycastHit2D hit = Physics2D.Raycast(transform.position, visuals.right * facing, 1f, environmentMask);
-		
 		if(hit) return;
 
 		Vector3 dropPos = transform.position + visuals.right * facing;

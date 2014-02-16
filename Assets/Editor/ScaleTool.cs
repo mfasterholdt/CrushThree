@@ -4,7 +4,7 @@ using UnityEngine;
 [InitializeOnLoad]
 public class ArrowCap : Editor 
 {
-	static ArrowCap()
+	/*static ArrowCap()
 	{
 		SceneView.onSceneGUIDelegate +=DrawArrows;
 	}
@@ -26,8 +26,6 @@ public class ArrowCap : Editor
 		Handles.ArrowCap(0, obj.position + Vector3.right, obj.rotation, arrowSize);
 
 		if(GUI.changed)
-			EditorUtility.SetDirty (obj);*/
-	}
+			EditorUtility.SetDirty (obj);
+	}*/
 }
-
-//Handles.ArrowCap(0, target.transform.position + new  Vector3(0,0,5), target.transform.rotation, arrowSize);

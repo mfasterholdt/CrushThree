@@ -13,7 +13,7 @@ public class Splitter : WorldObject, IConnectable
 	{
 		rightIndex = (int)(board.transform.position.x + board.width - 1);
 		leftIndex = (int)(board.transform.position.x);
-		heightIndex = (int)board.transform.position.y + board.height + 1;
+		heightIndex = (int)board.transform.position.y + board.height;
 	}
 
 	public bool RecieveCheck(TileCandy tile = null)
