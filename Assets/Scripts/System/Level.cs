@@ -50,7 +50,7 @@ public class Level : SingletonComponent<Level>
 	
 	void Start () 
 	{
-		nextGlitchTimer = 20f; //time before first glitch
+		nextGlitchTimer = 30f; //time before first glitch
 
 		Camera.main.transparencySortMode = TransparencySortMode.Orthographic;
 		player = FindObjectOfType<Player>();
@@ -119,12 +119,14 @@ public class Level : SingletonComponent<Level>
 
 	}
 
-	void CreateGlitch(TileCandy newGlitch)
+	bool CreateGlitch(TileCandy newGlitch)
 	{
-		newGlitch.BecomeGlitch();
+		if(glitches.Count >= glitchCount || newGlitch != lastPickedTile || nextGlitchTimer > 0)
+			return false;
 
-		if(glitches.Count < glitchCount)
-			nextGlitchTimer = UnityEngine.Random.Range(10f, 15f);
+		newGlitch.BecomeGlitch();
+		nextGlitchTimer = nextGlitchTimer = UnityEngine.Random.Range(10f, 15f);
+		return true;
 	}
 	
 	void OnSelectionClick(SelectionObj sender, Vector3 pos)
@@ -233,11 +235,11 @@ public class Level : SingletonComponent<Level>
 
 		if(horizontalMatches.Count > 1 || verticalMatches.Count > 1)
 		{
-			if(tile == lastPickedTile && nextGlitchTimer <= 0)
-			{
-				CreateGlitch(tile);
-				return;
-			}
+
+				bool createdGlitch = CreateGlitch(tile);
+				if(createdGlitch)
+					return;
+
 
 			int points = 1;
 
