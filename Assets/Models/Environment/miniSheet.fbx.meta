@@ -1,0 +1,125 @@
+fileFormatVersion: 2
+guid: 12ea1fcc413ce754fac504ef560c0bc3
+ModelImporter:
+  serializedVersion: 15
+  fileIDToRecycleName:
+    100000: //RootNode
+    100002: miniTileA
+    100004: miniTileB
+    100006: miniTileC
+    100008: miniTileD
+    100010: miniTileE
+    100012: miniTileF
+    100014: miniTileG
+    100016: miniTileH
+    100018: miniTileI
+    100020: miniTileJ
+    100022: miniTileK
+    100024: miniTileL
+    100026: miniTileM
+    400000: //RootNode
+    400002: miniTileA
+    400004: miniTileB
+    400006: miniTileC
+    400008: miniTileD
+    400010: miniTileE
+    400012: miniTileF
+    400014: miniTileG
+    400016: miniTileH
+    400018: miniTileI
+    400020: miniTileJ
+    400022: miniTileK
+    400024: miniTileL
+    400026: miniTileM
+    2300000: miniTileA
+    2300002: miniTileB
+    2300004: miniTileC
+    2300006: miniTileD
+    2300008: miniTileE
+    2300010: miniTileF
+    2300012: miniTileG
+    2300014: miniTileH
+    2300016: miniTileI
+    2300018: miniTileJ
+    2300020: miniTileK
+    2300022: miniTileL
+    2300024: miniTileM
+    3300000: miniTileA
+    3300002: miniTileB
+    3300004: miniTileC
+    3300006: miniTileD
+    3300008: miniTileE
+    3300010: miniTileF
+    3300012: miniTileG
+    3300014: miniTileH
+    3300016: miniTileI
+    3300018: miniTileJ
+    3300020: miniTileK
+    3300022: miniTileL
+    3300024: miniTileM
+    4300000: miniTileJ
+    4300002: miniTileK
+    4300004: miniTileL
+    4300006: miniTileI
+    4300008: miniTileH
+    4300010: miniTileG
+    4300012: miniTileF
+    4300014: miniTileE
+    4300016: miniTileD
+    4300018: miniTileC
+    4300020: miniTileB
+    4300022: miniTileA
+    4300024: miniTileM
+    9500000: //RootNode
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    optimizeGameObjects: 0
+    animationCompression: 1
+    animationRotationError: .5
+    animationPositionError: .5
+    animationScaleError: .5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    importBlendShapes: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    weldVertices: 1
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+  tangentSpace:
+    normalSmoothAngle: 60
+    splitTangentsAcrossUV: 0
+    normalImportMode: 0
+    tangentImportMode: 1
+  importAnimation: 1
+  copyAvatar: 0
+  humanDescription:
+    human: []
+    skeleton: []
+    armTwist: .5
+    foreArmTwist: .5
+    upperLegTwist: .5
+    legTwist: .5
+    armStretch: .0500000007
+    legStretch: .0500000007
+    feetSpacing: 0
+    rootMotionBoneName: 
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 0
+  userData: 

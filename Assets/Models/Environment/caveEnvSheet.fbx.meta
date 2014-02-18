@@ -16,6 +16,50 @@ ModelImporter:
     100020: plantC
     100022: polySurface18
     100024: rest
+    100026: blockA1
+    100028: blockB1
+    100030: blockC1
+    100032: blockC2
+    100034: blockD1
+    100036: blockD2
+    100038: blockStraightA1
+    100040: blockStraightA2
+    100042: menderA
+    100044: menderB
+    100046: menderC
+    100048: menderD
+    100050: menderE
+    100052: plantD
+    100054: plantE
+    100056: plantF
+    100058: plantG
+    100060: plantH
+    100062: plantI
+    100064: plantJ
+    100066: polySurface62
+    100068: polySurface64
+    100070: polySurface69
+    100072: polySurface71
+    100074: schroomA
+    100076: schroomB
+    100078: schroomC
+    100080: schroomD
+    100082: schroomE
+    100084: schroomF
+    100086: schroomG
+    100088: schroomH
+    100090: schroomI
+    100092: schroomJ
+    100094: schroomK
+    100096: schroomL
+    100098: schroomM
+    100100: schroomN
+    100102: schroomO
+    100104: schroomP
+    100106: schroomQ
+    100108: stoneA
+    100110: wallA
+    100112: wallB
     400000: blockA
     400002: blockB
     400004: blockC
@@ -29,6 +73,50 @@ ModelImporter:
     400020: plantC
     400022: polySurface18
     400024: rest
+    400026: blockA1
+    400028: blockB1
+    400030: blockC1
+    400032: blockC2
+    400034: blockD1
+    400036: blockD2
+    400038: blockStraightA1
+    400040: blockStraightA2
+    400042: menderA
+    400044: menderB
+    400046: menderC
+    400048: menderD
+    400050: menderE
+    400052: plantD
+    400054: plantE
+    400056: plantF
+    400058: plantG
+    400060: plantH
+    400062: plantI
+    400064: plantJ
+    400066: polySurface62
+    400068: polySurface64
+    400070: polySurface69
+    400072: polySurface71
+    400074: schroomA
+    400076: schroomB
+    400078: schroomC
+    400080: schroomD
+    400082: schroomE
+    400084: schroomF
+    400086: schroomG
+    400088: schroomH
+    400090: schroomI
+    400092: schroomJ
+    400094: schroomK
+    400096: schroomL
+    400098: schroomM
+    400100: schroomN
+    400102: schroomO
+    400104: schroomP
+    400106: schroomQ
+    400108: stoneA
+    400110: wallA
+    400112: wallB
     2300000: blockA
     2300002: blockB
     2300004: blockC
@@ -41,6 +129,51 @@ ModelImporter:
     2300018: plantC
     2300020: polySurface18
     2300022: rest
+    2300024: blockA1
+    2300026: blockB1
+    2300028: blockC1
+    2300030: blockC2
+    2300032: blockD1
+    2300034: blockD2
+    2300036: blockStraightA1
+    2300038: blockStraightA2
+    2300040: menderA
+    2300042: menderB
+    2300044: menderC
+    2300046: menderD
+    2300048: menderE
+    2300050: plantD
+    2300052: plantE
+    2300054: plantF
+    2300056: plantG
+    2300058: plantH
+    2300060: plantI
+    2300062: plantJ
+    2300064: polySurface62
+    2300066: polySurface64
+    2300068: polySurface69
+    2300070: polySurface71
+    2300072: schroomA
+    2300074: schroomB
+    2300076: schroomC
+    2300078: schroomD
+    2300080: schroomE
+    2300082: schroomF
+    2300084: schroomG
+    2300086: schroomH
+    2300088: schroomI
+    2300090: schroomJ
+    2300092: schroomK
+    2300094: schroomL
+    2300096: schroomM
+    2300098: schroomN
+    2300100: schroomO
+    2300102: schroomP
+    2300104: schroomQ
+    2300106: stoneA
+    2300108: wallA
+    2300110: wallB
+    2300112: //RootNode
     3300000: blockA
     3300002: blockB
     3300004: blockC
@@ -53,6 +186,51 @@ ModelImporter:
     3300018: plantC
     3300020: polySurface18
     3300022: rest
+    3300024: blockA1
+    3300026: blockB1
+    3300028: blockC1
+    3300030: blockC2
+    3300032: blockD1
+    3300034: blockD2
+    3300036: blockStraightA1
+    3300038: blockStraightA2
+    3300040: menderA
+    3300042: menderB
+    3300044: menderC
+    3300046: menderD
+    3300048: menderE
+    3300050: plantD
+    3300052: plantE
+    3300054: plantF
+    3300056: plantG
+    3300058: plantH
+    3300060: plantI
+    3300062: plantJ
+    3300064: polySurface62
+    3300066: polySurface64
+    3300068: polySurface69
+    3300070: polySurface71
+    3300072: schroomA
+    3300074: schroomB
+    3300076: schroomC
+    3300078: schroomD
+    3300080: schroomE
+    3300082: schroomF
+    3300084: schroomG
+    3300086: schroomH
+    3300088: schroomI
+    3300090: schroomJ
+    3300092: schroomK
+    3300094: schroomL
+    3300096: schroomM
+    3300098: schroomN
+    3300100: schroomO
+    3300102: schroomP
+    3300104: schroomQ
+    3300106: stoneA
+    3300108: wallA
+    3300110: wallB
+    3300112: //RootNode
     4300000: polySurface18
     4300002: plantC
     4300004: plantB
@@ -65,6 +243,50 @@ ModelImporter:
     4300018: blockA
     4300020: blockStraightA
     4300022: rest
+    4300024: blockD2
+    4300026: blockC2
+    4300028: blockStraightA2
+    4300030: blockA1
+    4300032: blockB1
+    4300034: blockC1
+    4300036: blockD1
+    4300038: blockStraightA1
+    4300040: schroomL
+    4300042: schroomO
+    4300044: schroomQ
+    4300046: schroomP
+    4300048: schroomM
+    4300050: schroomJ
+    4300052: schroomK
+    4300054: schroomN
+    4300056: stoneA
+    4300058: wallA
+    4300060: wallB
+    4300062: menderE
+    4300064: menderA
+    4300066: plantH
+    4300068: schroomH
+    4300070: plantI
+    4300072: schroomF
+    4300074: plantG
+    4300076: schroomG
+    4300078: plantJ
+    4300080: schroomI
+    4300082: schroomE
+    4300084: plantE
+    4300086: schroomD
+    4300088: schroomC
+    4300090: schroomB
+    4300092: plantF
+    4300094: plantD
+    4300096: schroomA
+    4300098: menderB
+    4300100: menderD
+    4300102: menderC
+    4300104: polySurface69
+    4300106: polySurface71
+    4300108: polySurface64
+    4300110: polySurface62
     9500000: //RootNode
   materials:
     importMaterials: 0
