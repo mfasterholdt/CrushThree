@@ -65,7 +65,10 @@ public class Player : SingletonComponent<Player>
 		Camera.main.transparencySortMode = TransparencySortMode.Orthographic;
 
 		if(startInBoard)
+		{
+			visuals.gameObject.SetActive(false);
 			SetBoardState();
+		}
 		else 
 			SetMoveState();
 
@@ -76,7 +79,8 @@ public class Player : SingletonComponent<Player>
 	//--//State
 	void SetBoardState()
 	{
-		visuals.gameObject.SetActive(false);
+		//visuals.gameObject.SetActive(false);
+		PlayAnimation(PlayerAnim.Idle);
 		rigidbody2D.isKinematic = true;
 		state.SetState(BoardState, null);
 	}
@@ -84,9 +88,10 @@ public class Player : SingletonComponent<Player>
 	void BoardState()
 	{
 		//Debug temp
-		if(debug && Input.GetKey(KeyCode.Space))
+		if(debug && (Input.GetKey(KeyCode.DownArrow) || Input.GetKey(KeyCode.S)))
 		{
 			grounded = false;
+			Level.Instance.glitchCount = 0;
 			SetMoveState();
 		}
 	}
@@ -194,13 +199,16 @@ public class Player : SingletonComponent<Player>
 	{
 		PlayAnimation(PlayerAnim.Idle);
 		state.SetState(LadderState, null);
+		rigidbody2D.velocity = Vector2.zero;
 	}
 
 	void LadderState()
 	{
-		BasicMovement(moveSpeed, 0);	
-
 		float inputY = Input.GetAxis("Vertical");
+
+		if(Mathf.Abs (inputY) < 0.1f)
+			BasicMovement(moveSpeed / 2f, groundFriction);	
+
 		Vector3 vel = rigidbody2D.velocity;
 
 		vel.y = Time.deltaTime * inputY * climbSpeed;				
@@ -407,31 +415,45 @@ public class Player : SingletonComponent<Player>
 
 	void OnTriggerEnter2D(Collider2D col)
 	{
+		Entrance entrance = col.GetComponent<Entrance>();
+		
+		if(entrance) 
+		{
+			currentEntrance = entrance;
+			return;
+		}
+
 		Trigger t = col.GetComponent<Trigger>();
 
-		if(t && t.type == Trigger.Type.Ladder && !ladderTriggers.Contains(t))
+		if(!t)
+			return;
+
+		if(t.type == Trigger.Type.Ladder && !ladderTriggers.Contains(t))
+		{
 			ladderTriggers.Add(t);
-
-		Entrance entrance = col.GetComponent<Entrance>();
-
-		if(entrance) 
-			currentEntrance = entrance;
+		}
+		else if(t.type == Trigger.Type.MindHat && state.FixedUpdate == JumpState)
+		{
+			SetBoardState();
+		}
 	}
 
 	void OnTriggerExit2D(Collider2D col)
 	{
-		Trigger t = col.GetComponent<Trigger>();
-
-		//Not a trigger
-		if(t)
+		if(currentEntrance && col.GetComponent<Entrance>())
 		{
-			if(t.type == Trigger.Type.Ladder && ladderTriggers.Contains(t))
-				ladderTriggers.Remove(t);
-			else if(t.type == Trigger.Type.MindHat)
-				SetBoardState();
+			currentEntrance = null;
+			return;
 		}
 
-		if(currentEntrance && col.GetComponent<Entrance>())
-			currentEntrance = null;
+		Trigger t = col.GetComponent<Trigger>();
+
+		if(!t)
+			return;
+
+		if(t.type == Trigger.Type.Ladder && ladderTriggers.Contains(t))
+		{
+			ladderTriggers.Remove(t);
+		}
 	}
 }

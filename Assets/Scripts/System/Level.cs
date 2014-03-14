@@ -132,14 +132,15 @@ public class Level : SingletonComponent<Level>
 	void OnSelectionClick(SelectionObj sender, Vector3 pos)
 	{	
 		//Are we trasitioning?
-		if(matchTransition) return;
+		if(matchTransition) 
+			return;
 
 		Vector2int p = new Vector2int(pos.x, pos.y);
 
 		Tile tile = GetTile(p);
 
 		//Did we hit a tile?
-		if(!tile) 
+		if(!tile || tile.ground) 
 			return;
 
 		//Is a tile already selecte?
@@ -236,9 +237,9 @@ public class Level : SingletonComponent<Level>
 		if(horizontalMatches.Count > 1 || verticalMatches.Count > 1)
 		{
 
-				bool createdGlitch = CreateGlitch(tile);
-				if(createdGlitch)
-					return;
+			bool createdGlitch = CreateGlitch(tile);
+			if(createdGlitch)
+				return;
 
 
 			int points = 1;

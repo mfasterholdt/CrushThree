@@ -4,6 +4,7 @@ using System.Collections;
 public class Splitter : WorldObject, IConnectable
 {
 	public Board board;
+	public Slot powerSource;
 
 	int rightIndex;
 	int leftIndex;
@@ -23,6 +24,9 @@ public class Splitter : WorldObject, IConnectable
 
 	public bool ParseTile(TileCandy tile)
 	{
+		if(powerSource && !powerSource.IsElectric())
+			return false;
+
 		for(int i = leftIndex; i <= rightIndex; i++)
 		{
 			bool success = Level.Instance.PlaceTile(i, heightIndex, tile);
