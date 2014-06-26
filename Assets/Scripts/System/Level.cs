@@ -14,6 +14,7 @@ public class Level : SingletonComponent<Level>
 	public Slot trashSlot;
 
 	public Tile borderTile;
+
 	public static Tile BorderTile;
 
 	[HideInInspector]	
@@ -37,6 +38,8 @@ public class Level : SingletonComponent<Level>
 	public GameObject playerPrefab;
 	private Player player;
 
+	public TextMesh pointsText;
+
 	private Tile pickedTile;
 	private Tile lastPickedTile;
 
@@ -47,6 +50,7 @@ public class Level : SingletonComponent<Level>
 	private bool dragging;
 
 	private float nextGlitchTimer;
+	private int totalPoints = 0;
 	
 	void Start () 
 	{
@@ -125,7 +129,7 @@ public class Level : SingletonComponent<Level>
 			return false;
 
 		newGlitch.BecomeGlitch();
-		nextGlitchTimer = nextGlitchTimer = UnityEngine.Random.Range(10f, 15f);
+		nextGlitchTimer = UnityEngine.Random.Range(10f, 15f);
 		return true;
 	}
 	
@@ -180,7 +184,7 @@ public class Level : SingletonComponent<Level>
 	private List<TileCandy> verticalMatches = new List<TileCandy>();
 	private List<TileCandy> allMatches = new List<TileCandy>();
 
-	public void Match(TileCandy tile)
+	public void MatchOld(TileCandy tile)
 	{
 		//Glitch Connect
 		if(tile.glitch)
@@ -274,7 +278,82 @@ public class Level : SingletonComponent<Level>
 				trashSlot.PlaceTile(newTrashTile);
 			}
 		}
+	}
 
+	public void Match(TileCandy tile)
+	{
+		//Tile already transitioning
+		if(allMatches.Contains(tile))
+			return;
+
+		Vector2int pos = tile.pos;
+		TileCandy.CandyType type = tile.type;
+
+		//Horizontal
+		TileCandy leftTile = CheckTile(pos.x - 1, pos.y, type);
+		TileCandy rightTile = CheckTile(pos.x + 1, pos.y, type);	
+		if(MatchThree(tile, leftTile, rightTile))
+			return;
+
+		//Vertical
+		TileCandy topTile = CheckTile(pos.x, pos.y + 1, type);
+		TileCandy bottomTile = CheckTile(pos.x, pos.y - 1, type);
+		if(MatchThree(tile, topTile, bottomTile))
+			return;
+
+		//Far Left
+		TileCandy farLeftTile = CheckTile(pos.x - 2, pos.y, type);
+		if(MatchThree(leftTile, tile, farLeftTile))
+			return;
+
+		//Far Right
+		TileCandy farRightTile = CheckTile(pos.x + 2, pos.y, type);
+		if(MatchThree(rightTile, tile, farRightTile))
+			return;
+
+		//Far Top
+		TileCandy farTopTile = CheckTile(pos.x, pos.y + 2, type);
+		if(MatchThree(topTile, tile, farTopTile))
+			return;
+
+		//Far Bottom
+		TileCandy farBottomTile = CheckTile(pos.x, pos.y - 2, type);
+		if(MatchThree(bottomTile, tile, farBottomTile))
+			return;
+	}
+	
+	private TileCandy CheckTile(int x, int y, TileCandy.CandyType type)
+	{
+		TileCandy tile = GetTile(x, y) as TileCandy;
+
+		if(tile && tile.type == type && !allMatches.Contains(tile))
+			return tile;
+		else
+			return null;
+	}
+
+	private bool MatchThree(TileCandy center, TileCandy firstTile, TileCandy secondTile)
+	{
+		if(center && firstTile && secondTile)
+		{
+			center.spawnEvolution = true;
+
+			allMatches.Add(center);
+			allMatches.Add(firstTile);
+			allMatches.Add(secondTile);
+			
+			AddPoints(center.points);
+
+			return true;
+		}
+
+		return false;
+	}
+	
+	private void AddPoints(int value)
+	{
+		totalPoints += value;
+		pointsText.text = totalPoints.ToString();
 	}
 
 	public void Connect(List<TileCandy> list, TileCandy.CandyType type, Vector2int pos, Vector2int dir)
@@ -311,7 +390,6 @@ public class Level : SingletonComponent<Level>
 		Vector3 spawnPos = board.transform.position + Vector3.right * 11; //p.ToVector3();
 
 		GameObject newPlayer = Instantiate(playerPrefab, spawnPos, Quaternion.Euler(0, 0, 0)) as GameObject; 
-
 
 		player = newPlayer.GetComponent<Player>();*/
 	}
@@ -476,6 +554,15 @@ public class Level : SingletonComponent<Level>
 
 		TileCandy c = tile as TileCandy;
 
+		GameObject evolutionPrefab = null;
+		Vector2int evolutionPos = Vector2int.zero; 
+
+		if(c.evolution && c.spawnEvolution)
+		{
+			evolutionPrefab = c.evolution.gameObject;
+			evolutionPos = c.pos;
+		}
+
 		if(c && c.glitch)
 			glitches.Remove(c);
 
@@ -483,5 +570,14 @@ public class Level : SingletonComponent<Level>
 
 		if(destroy)
 			tile.Remove();
+
+		if(evolutionPrefab)
+		{
+			TileCandy newTile = CreateTile(evolutionPos, evolutionPrefab) as TileCandy;				
+
+			newTile.SetBoardState();
+
+			newTile.Landing();
+		}
 	}
 }

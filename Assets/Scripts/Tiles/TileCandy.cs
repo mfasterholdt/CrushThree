@@ -10,6 +10,11 @@ public class TileCandy : Tile
 	public CandyType type;
 	
 	private Pipe currentPipe;
+	public TileCandy evolution;
+	public int points = 0;
+
+	[HideInInspector]
+	public bool spawnEvolution;
 
 	public bool glitch;
 	private Material initialMaterial;
